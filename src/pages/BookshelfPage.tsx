@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DefaultPageLayout } from "@/ui/layouts/DefaultPageLayout";
 import { Avatar } from "@/ui/components/Avatar";
 import { DropdownMenu } from "@/ui/components/DropdownMenu";
@@ -9,23 +9,29 @@ import { Button } from "@/ui/components/Button";
 import { TextField } from "@/ui/components/TextField";
 import { Table } from "@/ui/components/Table";
 import { IconButton } from "@/ui/components/IconButton";
-import { bookService, Book } from "../services/bookService";
+import { urlService, Url } from "@/services/urlService";
+import { bookService, Book } from "@/services/bookService";
 
 function BookshelfPage() {
+  // Book state
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
+  // URL state
+  const [urls, setUrls] = useState<Url[]>([]);
+  const [urlsLoading, setUrlsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 5;
+
+  // Fetch books on component mount
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        setLoading(true);
         const data = await bookService.getBooks();
         setBooks(data);
-        setError(null);
-      } catch (err) {
-        console.error("Error fetching books:", err);
-        setError("Failed to load books. Please try again later.");
+      } catch (error) {
+        console.error('Error fetching books:', error);
       } finally {
         setLoading(false);
       }
@@ -34,6 +40,43 @@ function BookshelfPage() {
     fetchBooks();
   }, []);
 
+  // Fetch URLs on component mount
+  useEffect(() => {
+    const fetchUrls = async () => {
+      try {
+        setUrlsLoading(true);
+        const data = await urlService.getUrls();
+        setUrls(data);
+        setTotalPages(Math.ceil(data.length / itemsPerPage));
+      } catch (error) {
+        console.error('Error fetching URLs:', error);
+      } finally {
+        setUrlsLoading(false);
+      }
+    };
+
+    fetchUrls();
+  }, []);
+
+  // Handle editing URL
+  const handleEditUrl = (id: string) => {
+    console.log('Edit URL with ID:', id);
+    // Add edit functionality here
+  };
+
+  // Handle deleting URL
+  const handleDeleteUrl = (id: string) => {
+    console.log('Delete URL with ID:', id);
+    // Add delete functionality here
+  };
+
+  // Get paginated URLs
+  const getPaginatedUrls = () => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return urls.slice(startIndex, endIndex);
+  };
+
   return (
     <DefaultPageLayout>
       <div className="container max-w-none flex h-full w-full flex-col items-start gap-12 bg-default-background py-12">
@@ -41,12 +84,6 @@ function BookshelfPage() {
           <span className="w-full text-heading-2 font-heading-2 text-default-font">
             Explore our bookshelves
           </span>
-
-          {error && (
-            <div className="w-full p-4 bg-red-100 text-red-700 rounded-md">
-              {error}
-            </div>
-          )}
 
           {loading ? (
             <div className="w-full text-center py-8">Loading books...</div>
@@ -120,128 +157,126 @@ function BookshelfPage() {
                       Top Gainers
                     </DropdownMenu.DropdownItem>
                     <DropdownMenu.DropdownItem icon={null}>
-                      Top Losers
-                    </DropdownMenu.DropdownItem>
-                    <DropdownMenu.DropdownItem icon={null}>
-                      Recently Updated
+                      Trending
                     </DropdownMenu.DropdownItem>
                   </DropdownMenu>
                 </SubframeCore.DropdownMenu.Content>
               </SubframeCore.DropdownMenu.Portal>
             </SubframeCore.DropdownMenu.Root>
-            <TextField
-              className="h-auto grow shrink-0 basis-0"
-              label=""
-              helpText=""
-              icon="FeatherSearch"
+            <Button
+              variant="neutral-secondary"
+              icon="FeatherCalendar"
+              iconRight="FeatherChevronDown"
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
             >
-              <TextField.Input
-                className="w-56 grow shrink-0 basis-0"
-                placeholder="What do you want to read?"
-                value=""
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
-              />
-            </TextField>
+              This month
+            </Button>
+            <Button
+              variant="neutral-secondary"
+              icon="FeatherClipboard"
+              iconRight="FeatherChevronDown"
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+            >
+              All types
+            </Button>
           </div>
-          <div className="flex w-full flex-col items-start rounded-md border border-solid border-neutral-border bg-default-background shadow-sm overflow-x-auto flex-none">
-            <Table
-              header={
-                <Table.HeaderRow>
-                  <Table.HeaderCell>Title</Table.HeaderCell>
-                  <Table.HeaderCell>Published on</Table.HeaderCell>
-                  <Table.HeaderCell>Written by</Table.HeaderCell>
-                  <Table.HeaderCell className="h-8 w-28 flex-none">
+          {urlsLoading ? (
+            <div className="w-full text-center py-8">Loading URLs...</div>
+          ) : (
+            <Table>
+              <Table.Head>
+                <Table.Row>
+                  <Table.Cell variant="head" className="w-1/3">
+                    Title
+                  </Table.Cell>
+                  <Table.Cell variant="head" className="w-1/5">
+                    Published on
+                  </Table.Cell>
+                  <Table.Cell variant="head" className="w-1/5">
+                    Written by
+                  </Table.Cell>
+                  <Table.Cell variant="head" className="w-1/5">
                     Date
-                  </Table.HeaderCell>
-                </Table.HeaderRow>
-              }
-            >
-              {books.map((book) => (
-                <Table.Row key={book.id}>
-                  <Table.Cell>
-                    <div className="flex items-center gap-2">
-                      <img
-                        className="h-6 w-6 flex-none rounded-md object-cover"
-                        src={book.cover_image || "https://res.cloudinary.com/subframe/image/upload/v1723780719/uploads/302/lf4i2zybfw9xxl56w6ce.png"}
-                      />
-                      <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
-                        {book.title}
-                      </span>
-                    </div>
                   </Table.Cell>
-                  <Table.Cell>
-                    <span className="whitespace-nowrap text-caption-bold font-caption-bold text-success-700">
-                      {book.publisher}
-                    </span>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <span className="whitespace-nowrap text-caption-bold font-caption-bold text-default-font">
-                      {book.author}
-                    </span>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <span className="whitespace-nowrap text-caption font-caption text-default-font">
-                      {book.published_date}
-                    </span>
+                  <Table.Cell variant="head" className="w-30">
+                    <span className="sr-only">Actions</span>
                   </Table.Cell>
                 </Table.Row>
-              ))}
+              </Table.Head>
+              <Table.Body>
+                {getPaginatedUrls().length === 0 ? (
+                  <Table.Row>
+                    <Table.Cell colSpan={5} className="text-center py-4">
+                      No URLs found. Add some URLs to your collection!
+                    </Table.Cell>
+                  </Table.Row>
+                ) : (
+                  getPaginatedUrls().map((url) => (
+                    <Table.Row key={url.id}>
+                      <Table.Cell>{url.title}</Table.Cell>
+                      <Table.Cell>{url.domain_name}</Table.Cell>
+                      <Table.Cell>{url.author}</Table.Cell>
+                      <Table.Cell>
+                        {new Date(url.date_published).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric'
+                        })}
+                      </Table.Cell>
+                      <Table.Cell>
+                        <div className="flex items-center justify-end gap-1">
+                          <IconButton
+                            variant="neutral-secondary"
+                            icon="FeatherEdit"
+                            aria-label="Edit essay"
+                            onClick={() => handleEditUrl(url.id)}
+                          />
+                          <IconButton
+                            variant="neutral-secondary"
+                            icon="FeatherTrash"
+                            aria-label="Delete essay"
+                            onClick={() => handleDeleteUrl(url.id)}
+                          />
+                        </div>
+                      </Table.Cell>
+                    </Table.Row>
+                  ))
+                )}
+              </Table.Body>
+              <Table.Pagination>
+                <Table.PaginationContent>
+                  <Table.PaginationItem
+                    icon="FeatherChevronsLeft"
+                    aria-label="Go to first page"
+                    onClick={() => setCurrentPage(1)}
+                  />
+                  <Table.PaginationItem
+                    icon="FeatherChevronLeft"
+                    aria-label="Go to previous page"
+                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  />
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <Table.PaginationItem
+                      key={page}
+                      page={page}
+                      onClick={() => setCurrentPage(page)}
+                      isActive={page === currentPage}
+                    />
+                  ))}
+                  <Table.PaginationItem
+                    icon="FeatherChevronRight"
+                    aria-label="Go to next page"
+                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                  />
+                  <Table.PaginationItem
+                    icon="FeatherChevronsRight"
+                    aria-label="Go to last page"
+                    onClick={() => setCurrentPage(totalPages)}
+                  />
+                </Table.PaginationContent>
+              </Table.Pagination>
             </Table>
-            <div className="flex w-full items-center justify-center gap-1 px-4 py-4">
-              <div className="flex items-center justify-center gap-1">
-                <IconButton
-                  icon="FeatherChevronFirst"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-                />
-                <IconButton
-                  icon="FeatherChevronLeft"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-                />
-              </div>
-              <div className="flex items-center justify-center gap-1">
-                <Button
-                  variant="brand-secondary"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-                >
-                  1
-                </Button>
-                <Button
-                  variant="neutral-tertiary"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-                >
-                  2
-                </Button>
-                <Button
-                  variant="neutral-tertiary"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-                >
-                  3
-                </Button>
-                <Button
-                  variant="neutral-tertiary"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-                >
-                  4
-                </Button>
-                <Button
-                  variant="neutral-tertiary"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-                >
-                  5
-                </Button>
-              </div>
-              <div className="flex items-center justify-center gap-1">
-                <IconButton
-                  icon="FeatherChevronRight"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-                />
-                <IconButton
-                  icon="FeatherChevronLast"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-                />
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </DefaultPageLayout>
