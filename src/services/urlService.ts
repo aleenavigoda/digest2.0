@@ -15,8 +15,7 @@ export const urlService = {
   async getUrls(): Promise<Url[]> {
     const { data, error } = await supabase
       .from('all_urls')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .select('*');
     
     if (error) {
       console.error('Error fetching URLs:', error);

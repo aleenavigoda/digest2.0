@@ -10,35 +10,14 @@ import { TextField } from "@/ui/components/TextField";
 import { Table } from "@/ui/components/Table";
 import { IconButton } from "@/ui/components/IconButton";
 import { urlService, Url } from "@/services/urlService";
-import { bookService, Book } from "@/services/bookService";
 
 function BookshelfPage() {
-  // Book state
-  const [books, setBooks] = useState<Book[]>([]);
-  const [loading, setLoading] = useState(true);
-
   // URL state
   const [urls, setUrls] = useState<Url[]>([]);
   const [urlsLoading, setUrlsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 5;
-
-  // Fetch books on component mount
-  useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        const data = await bookService.getBooks();
-        setBooks(data);
-      } catch (error) {
-        console.error('Error fetching books:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBooks();
-  }, []);
 
   // Fetch URLs on component mount
   useEffect(() => {
