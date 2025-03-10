@@ -25,30 +25,43 @@ interface UrlData {
 function BookshelfPage() {
   const [urlData, setUrlData] = useState<UrlData[]>([]);
   const [loading, setLoading] = useState(true);
-  const rowsPerPage = 12;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const rowsPerPage = 7;
+
+  const fetchUrls = async (page: number) => {
+    setLoading(true);
+    try {
+      // Get total count first
+      const countResponse = await supabase
+        .from('all_urls')
+        .select('*', { count: 'exact', head: true });
+      
+      const totalCount = countResponse.count || 0;
+      const calculatedTotalPages = Math.ceil(totalCount / rowsPerPage);
+      setTotalPages(calculatedTotalPages > 0 ? calculatedTotalPages : 1);
+      
+      // Then get paginated data
+      const { data, error } = await supabase
+        .from('all_urls')
+        .select('*')
+        .range((page - 1) * rowsPerPage, page * rowsPerPage - 1);
+
+      if (error) {
+        console.error('Error fetching URLs:', error);
+      } else {
+        setUrlData(data || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch URLs:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchUrls() {
-      try {
-        const { data, error } = await supabase
-          .from('all_urls')
-          .select('*')
-          .limit(rowsPerPage);
-
-        if (error) {
-          console.error('Error fetching URLs:', error);
-        } else {
-          setUrlData(data || []);
-        }
-      } catch (err) {
-        console.error('Failed to fetch URLs:', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchUrls();
-  }, []);
+    fetchUrls(currentPage);
+  }, [currentPage]);
   return (
     <DefaultPageLayout>
       <div className="container max-w-none flex h-full w-full flex-col items-start gap-12 bg-default-background py-12">
@@ -223,53 +236,56 @@ function BookshelfPage() {
               <div className="flex items-center justify-center gap-1">
                 <IconButton
                   icon="FeatherChevronFirst"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+                  onClick={() => setCurrentPage(1)}
+                  disabled={currentPage === 1}
                 />
                 <IconButton
                   icon="FeatherChevronLeft"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
                 />
               </div>
               <div className="flex items-center justify-center gap-1">
-                <Button
-                  variant="brand-secondary"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-                >
-                  1
-                </Button>
-                <Button
-                  variant="neutral-tertiary"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-                >
-                  2
-                </Button>
-                <Button
-                  variant="neutral-tertiary"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-                >
-                  3
-                </Button>
-                <Button
-                  variant="neutral-tertiary"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-                >
-                  4
-                </Button>
-                <Button
-                  variant="neutral-tertiary"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-                >
-                  5
-                </Button>
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  // Calculate which pages to show based on current page
+                  let pageNum = i + 1;
+                  if (currentPage > 3 && totalPages > 5) {
+                    pageNum = Math.min(currentPage - 2 + i, totalPages);
+                    if (i === 0 && currentPage > 3) {
+                      pageNum = 1; // First page
+                    } else if (i === 1 && currentPage > 4) {
+                      return (
+                        <span key="ellipsis-1" className="px-2">...</span>
+                      );
+                    } else if (i === 4 && currentPage < totalPages - 2) {
+                      return (
+                        <span key="ellipsis-2" className="px-2">...</span>
+                      );
+                    } else if (i === 4) {
+                      pageNum = totalPages; // Last page
+                    }
+                  }
+                  return (
+                    <Button
+                      key={pageNum}
+                      variant={currentPage === pageNum ? "brand-secondary" : "neutral-tertiary"}
+                      onClick={() => setCurrentPage(pageNum)}
+                    >
+                      {pageNum}
+                    </Button>
+                  );
+                })}
               </div>
               <div className="flex items-center justify-center gap-1">
                 <IconButton
                   icon="FeatherChevronRight"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
                 />
                 <IconButton
                   icon="FeatherChevronLast"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+                  onClick={() => setCurrentPage(totalPages)}
+                  disabled={currentPage === totalPages}
                 />
               </div>
             </div>
