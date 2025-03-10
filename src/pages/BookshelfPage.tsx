@@ -1,7 +1,6 @@
-
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { DefaultPageLayout } from "@/ui/layouts/DefaultPageLayout";
 import { Avatar } from "@/ui/components/Avatar";
 import { DropdownMenu } from "@/ui/components/DropdownMenu";
@@ -10,8 +9,31 @@ import { Button } from "@/ui/components/Button";
 import { TextField } from "@/ui/components/TextField";
 import { Table } from "@/ui/components/Table";
 import { IconButton } from "@/ui/components/IconButton";
+import { bookService, Book } from "../services/bookService";
 
 function BookshelfPage() {
+  const [books, setBooks] = useState<Book[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        setLoading(true);
+        const data = await bookService.getBooks();
+        setBooks(data);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching books:", err);
+        setError("Failed to load books. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBooks();
+  }, []);
+
   return (
     <DefaultPageLayout>
       <div className="container max-w-none flex h-full w-full flex-col items-start gap-12 bg-default-background py-12">
@@ -19,56 +41,53 @@ function BookshelfPage() {
           <span className="w-full text-heading-2 font-heading-2 text-default-font">
             Explore our bookshelves
           </span>
-          <div className="flex w-full flex-wrap items-start gap-4">
-            <div className="flex grow shrink-0 basis-0 flex-col items-start gap-4 self-stretch rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm">
-              <div className="flex w-full items-center gap-4">
-                <Avatar
-                  size="x-large"
-                  image="https://res.cloudinary.com/subframe/image/upload/v1723780835/uploads/302/kr9usrdgbwp9cge3ab1f.png"
-                >
-                  A
-                </Avatar>
-                <div className="flex grow shrink-0 basis-0 flex-col items-start gap-1">
-                  <span className="text-caption-bold font-caption-bold text-brand-700">
-                    DIGEST
-                  </span>
-                  <span className="text-heading-3 font-heading-3 text-default-font">
-                    Writing on Writing
-                  </span>
-                </div>
-              </div>
-              <div className="flex flex-col items-start gap-4">
-                <span className="text-body font-body text-subtext-color">
-                  The best essays from the best essayists on improving your
-                  craft, finding your audience, and owning your voice.
-                </span>
-              </div>
+
+          {error && (
+            <div className="w-full p-4 bg-red-100 text-red-700 rounded-md">
+              {error}
             </div>
-            <div className="flex grow shrink-0 basis-0 flex-col items-start gap-4 self-stretch rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm">
-              <div className="flex w-full items-center gap-4">
-                <Avatar
-                  size="x-large"
-                  image="https://res.cloudinary.com/subframe/image/upload/v1723780859/uploads/302/hh4s5xjmsigiehqkb1uh.png"
-                >
-                  A
-                </Avatar>
-                <div className="flex grow shrink-0 basis-0 flex-col items-start gap-1">
-                  <span className="text-caption-bold font-caption-bold text-brand-700">
-                    RADAR
-                  </span>
-                  <span className="text-heading-3 font-heading-3 text-default-font">
-                    Climate &amp; Care
-                  </span>
+          )}
+
+          {loading ? (
+            <div className="w-full text-center py-8">Loading books...</div>
+          ) : (
+            <div className="flex w-full flex-wrap items-start gap-4">
+              {books.map((book) => (
+                <div key={book.id} className="flex grow shrink-0 basis-0 flex-col items-start gap-4 self-stretch rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm">
+                  <div className="flex w-full items-center gap-4">
+                    <Avatar
+                      size="x-large"
+                      image={book.cover_image || "https://res.cloudinary.com/subframe/image/upload/v1723780835/uploads/302/kr9usrdgbwp9cge3ab1f.png"}
+                    >
+                      {book.title.charAt(0)}
+                    </Avatar>
+                    <div className="flex grow shrink-0 basis-0 flex-col items-start gap-1">
+                      <span className="text-caption-bold font-caption-bold text-brand-700">
+                        {book.category || "BOOK"}
+                      </span>
+                      <span className="text-heading-3 font-heading-3 text-default-font">
+                        {book.title}
+                      </span>
+                      <span className="text-body font-body text-default-font">
+                        by {book.author}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-start gap-4">
+                    <p className="text-body font-body text-default-font">
+                      {book.description || "No description available."}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-col items-start gap-4">
-                <span className="text-body font-body text-subtext-color">
-                  How can we re-write ecologies of care through the lens of
-                  indigenous heritage and the earth&#39;s natural primitives?
-                </span>
-              </div>
+              ))}
+
+              {books.length === 0 && !loading && (
+                <div className="w-full text-center py-8">
+                  No books found. Add some books to your collection!
+                </div>
+              )}
             </div>
-          </div>
+          )}
         </div>
         <div className="flex w-full flex-col items-start gap-6">
           <span className="w-full text-heading-2 font-heading-2 text-default-font">
@@ -137,202 +156,36 @@ function BookshelfPage() {
                 </Table.HeaderRow>
               }
             >
-              <Table.Row>
-                <Table.Cell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      className="h-6 w-6 flex-none rounded-md object-cover"
-                      src="https://res.cloudinary.com/subframe/image/upload/v1723780719/uploads/302/lf4i2zybfw9xxl56w6ce.png"
-                    />
-                    <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
-                      I can tolerate anything except the outgroup
+              {books.map((book) => (
+                <Table.Row key={book.id}>
+                  <Table.Cell>
+                    <div className="flex items-center gap-2">
+                      <img
+                        className="h-6 w-6 flex-none rounded-md object-cover"
+                        src={book.cover_image || "https://res.cloudinary.com/subframe/image/upload/v1723780719/uploads/302/lf4i2zybfw9xxl56w6ce.png"}
+                      />
+                      <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
+                        {book.title}
+                      </span>
+                    </div>
+                  </Table.Cell>
+                  <Table.Cell>
+                    <span className="whitespace-nowrap text-caption-bold font-caption-bold text-success-700">
+                      {book.publisher}
                     </span>
-                  </div>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-success-700">
-                    Slate Star Codex
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-default-font">
-                    Scott Alexander
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption font-caption text-default-font">
-                    9/20/14
-                  </span>
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      className="h-6 w-6 flex-none rounded-md object-cover"
-                      src="https://res.cloudinary.com/subframe/image/upload/v1723780655/uploads/302/vacffcy0kwezmeps1tbv.png"
-                    />
-                    <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
-                      Information Asymmetry is Power
+                  </Table.Cell>
+                  <Table.Cell>
+                    <span className="whitespace-nowrap text-caption-bold font-caption-bold text-default-font">
+                      {book.author}
                     </span>
-                  </div>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-success-700">
-                    chrisgillett.org
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-default-font">
-                    Chris Gillett
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption font-caption text-default-font">
-                    9/2/22
-                  </span>
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      className="h-6 w-6 flex-none rounded-md object-cover"
-                      src="https://res.cloudinary.com/subframe/image/upload/v1723780751/uploads/302/cbaa1tfstfnmksus95et.png"
-                    />
-                    <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
-                      On DeepSeek and Export Controls
+                  </Table.Cell>
+                  <Table.Cell>
+                    <span className="whitespace-nowrap text-caption font-caption text-default-font">
+                      {book.published_date}
                     </span>
-                  </div>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-success-700">
-                    darioamodei.com
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-default-font">
-                    Dario Amodei
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption font-caption text-default-font">
-                    1/28/25
-                  </span>
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      className="h-6 w-6 flex-none rounded-md object-cover"
-                      src="https://res.cloudinary.com/subframe/image/upload/v1723780624/uploads/302/sxocuez05safdpfaztiz.png"
-                    />
-                    <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
-                      28 Millenia Later
-                    </span>
-                  </div>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-success-700">
-                    qntm.org
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-default-font">
-                    qntm
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption font-caption text-default-font">
-                    11/13/20
-                  </span>
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      className="h-6 w-6 flex-none rounded-md object-cover"
-                      src="https://res.cloudinary.com/subframe/image/upload/v1723780871/uploads/302/h25wathcuwiid5ulpu1i.png"
-                    />
-                    <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
-                      The necessity of Nussbaum
-                    </span>
-                  </div>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-success-700">
-                    Aeon
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-default-font">
-                    Brandon Robshaw
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption font-caption text-default-font">
-                    3/7/25
-                  </span>
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      className="h-6 w-6 flex-none rounded-md object-cover"
-                      src="https://res.cloudinary.com/subframe/image/upload/v1723780853/uploads/302/h3glkflohcjajdl3lah6.png"
-                    />
-                    <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
-                      Automating Reality
-                    </span>
-                  </div>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-success-700">
-                    ZORA ZINE
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-default-font">
-                    Matthew Donovan
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption font-caption text-default-font">
-                    12/29/23
-                  </span>
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      className="h-6 w-6 flex-none rounded-md object-cover"
-                      src="https://res.cloudinary.com/subframe/image/upload/v1723780696/uploads/302/hxk01sckxtlsjxi4n2dv.png"
-                    />
-                    <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
-                      Compute in America: Building the Next Gen.. 
-                    </span>
-                  </div>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-success-700">
-                    IFP
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-default-font">
-                    Tim Fist
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption font-caption text-default-font">
-                    6/10/24
-                  </span>
-                </Table.Cell>
-              </Table.Row>
+                  </Table.Cell>
+                </Table.Row>
+              ))}
             </Table>
             <div className="flex w-full items-center justify-center gap-1 px-4 py-4">
               <div className="flex items-center justify-center gap-1">
