@@ -1,7 +1,7 @@
 
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { DefaultPageLayout } from "../ui/layouts/DefaultPageLayout";
 import { Avatar } from "../ui/components/Avatar";
 import { DropdownMenu } from "../ui/components/DropdownMenu";
@@ -10,8 +10,43 @@ import { Button } from "../ui/components/Button";
 import { TextField } from "../ui/components/TextField";
 import { Table } from "../ui/components/Table";
 import { IconButton } from "../ui/components/IconButton";
+import { supabase } from "../lib/supabase";
+
+// Define the type for our URL data
+interface UrlData {
+  id: number;
+  title: string;
+  domain_name: string;
+  author: string;
+  date_published: string;
+  image_url?: string;
+}
 
 function BookshelfPage() {
+  const [urlData, setUrlData] = useState<UrlData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchUrls() {
+      try {
+        const { data, error } = await supabase
+          .from('all_urls')
+          .select('*');
+
+        if (error) {
+          console.error('Error fetching URLs:', error);
+        } else {
+          setUrlData(data || []);
+        }
+      } catch (err) {
+        console.error('Failed to fetch URLs:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchUrls();
+  }, []);
   return (
     <DefaultPageLayout>
       <div className="container max-w-none flex h-full w-full flex-col items-start gap-12 bg-default-background py-12">
@@ -137,202 +172,50 @@ function BookshelfPage() {
                 </Table.HeaderRow>
               }
             >
-              <Table.Row>
-                <Table.Cell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      className="h-6 w-6 flex-none rounded-md object-cover"
-                      src="https://res.cloudinary.com/subframe/image/upload/v1723780719/uploads/302/lf4i2zybfw9xxl56w6ce.png"
-                    />
-                    <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
-                      I can tolerate anything except the outgroup
-                    </span>
-                  </div>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-success-700">
-                    Slate Star Codex
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-default-font">
-                    Scott Alexander
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption font-caption text-default-font">
-                    9/20/14
-                  </span>
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      className="h-6 w-6 flex-none rounded-md object-cover"
-                      src="https://res.cloudinary.com/subframe/image/upload/v1723780655/uploads/302/vacffcy0kwezmeps1tbv.png"
-                    />
-                    <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
-                      Information Asymmetry is Power
-                    </span>
-                  </div>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-success-700">
-                    chrisgillett.org
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-default-font">
-                    Chris Gillett
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption font-caption text-default-font">
-                    9/2/22
-                  </span>
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      className="h-6 w-6 flex-none rounded-md object-cover"
-                      src="https://res.cloudinary.com/subframe/image/upload/v1723780751/uploads/302/cbaa1tfstfnmksus95et.png"
-                    />
-                    <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
-                      On DeepSeek and Export Controls
-                    </span>
-                  </div>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-success-700">
-                    darioamodei.com
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-default-font">
-                    Dario Amodei
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption font-caption text-default-font">
-                    1/28/25
-                  </span>
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      className="h-6 w-6 flex-none rounded-md object-cover"
-                      src="https://res.cloudinary.com/subframe/image/upload/v1723780624/uploads/302/sxocuez05safdpfaztiz.png"
-                    />
-                    <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
-                      28 Millenia Later
-                    </span>
-                  </div>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-success-700">
-                    qntm.org
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-default-font">
-                    qntm
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption font-caption text-default-font">
-                    11/13/20
-                  </span>
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      className="h-6 w-6 flex-none rounded-md object-cover"
-                      src="https://res.cloudinary.com/subframe/image/upload/v1723780871/uploads/302/h25wathcuwiid5ulpu1i.png"
-                    />
-                    <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
-                      The necessity of Nussbaum
-                    </span>
-                  </div>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-success-700">
-                    Aeon
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-default-font">
-                    Brandon Robshaw
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption font-caption text-default-font">
-                    3/7/25
-                  </span>
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      className="h-6 w-6 flex-none rounded-md object-cover"
-                      src="https://res.cloudinary.com/subframe/image/upload/v1723780853/uploads/302/h3glkflohcjajdl3lah6.png"
-                    />
-                    <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
-                      Automating Reality
-                    </span>
-                  </div>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-success-700">
-                    ZORA ZINE
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-default-font">
-                    Matthew Donovan
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption font-caption text-default-font">
-                    12/29/23
-                  </span>
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      className="h-6 w-6 flex-none rounded-md object-cover"
-                      src="https://res.cloudinary.com/subframe/image/upload/v1723780696/uploads/302/hxk01sckxtlsjxi4n2dv.png"
-                    />
-                    <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
-                      Compute in America: Building the Next Gen.. 
-                    </span>
-                  </div>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-success-700">
-                    IFP
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption-bold font-caption-bold text-default-font">
-                    Tim Fist
-                  </span>
-                </Table.Cell>
-                <Table.Cell>
-                  <span className="whitespace-nowrap text-caption font-caption text-default-font">
-                    6/10/24
-                  </span>
-                </Table.Cell>
-              </Table.Row>
+              {loading ? (
+                <Table.Row>
+                  <Table.Cell colSpan={4}>
+                    <span className="text-body font-body text-default-font">Loading...</span>
+                  </Table.Cell>
+                </Table.Row>
+              ) : urlData.length === 0 ? (
+                <Table.Row>
+                  <Table.Cell colSpan={4}>
+                    <span className="text-body font-body text-default-font">No data available</span>
+                  </Table.Cell>
+                </Table.Row>
+              ) : (
+                urlData.map((url) => (
+                  <Table.Row key={url.id}>
+                    <Table.Cell>
+                      <div className="flex items-center gap-2">
+                        <img
+                          className="h-6 w-6 flex-none rounded-md object-cover"
+                          src={url.image_url || "https://res.cloudinary.com/subframe/image/upload/v1723780719/uploads/302/lf4i2zybfw9xxl56w6ce.png"}
+                        />
+                        <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
+                          {url.title}
+                        </span>
+                      </div>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <span className="whitespace-nowrap text-caption-bold font-caption-bold text-success-700">
+                        {url.domain_name}
+                      </span>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <span className="whitespace-nowrap text-caption-bold font-caption-bold text-default-font">
+                        {url.author}
+                      </span>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <span className="whitespace-nowrap text-caption font-caption text-default-font">
+                        {url.date_published}
+                      </span>
+                    </Table.Cell>
+                  </Table.Row>
+                ))
+              )}
             </Table>
             <div className="flex w-full items-center justify-center gap-1 px-4 py-4">
               <div className="flex items-center justify-center gap-1">
