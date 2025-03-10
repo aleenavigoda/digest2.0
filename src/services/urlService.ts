@@ -1,14 +1,12 @@
 
-import { supabase } from '../lib/supabase';
+import { supabase } from "@/lib/supabase";
 
 export interface Url {
   id: string;
-  title: string;
   domain_name: string;
   author: string;
   date_published: string;
-  url?: string;
-  created_at?: string;
+  url: string;
 }
 
 export const urlService = {
@@ -33,7 +31,7 @@ export const urlService = {
       .single();
     
     if (error) {
-      console.error(`Error fetching URL with id ${id}:`, error);
+      console.error('Error fetching URL by ID:', error);
       throw error;
     }
     
