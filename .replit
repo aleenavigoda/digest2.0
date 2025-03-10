@@ -16,3 +16,7 @@ author = 39424427
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run preview"
+
+[[ports]]
+localPort = 5175
+externalPort = 80
