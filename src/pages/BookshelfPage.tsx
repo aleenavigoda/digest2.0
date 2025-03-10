@@ -25,13 +25,15 @@ interface UrlData {
 function BookshelfPage() {
   const [urlData, setUrlData] = useState<UrlData[]>([]);
   const [loading, setLoading] = useState(true);
+  const rowsPerPage = 12;
 
   useEffect(() => {
     async function fetchUrls() {
       try {
         const { data, error } = await supabase
           .from('all_urls')
-          .select('*');
+          .select('*')
+          .limit(rowsPerPage);
 
         if (error) {
           console.error('Error fetching URLs:', error);
@@ -193,7 +195,7 @@ function BookshelfPage() {
                           className="h-6 w-6 flex-none rounded-md object-cover"
                           src={url.image_url || "https://res.cloudinary.com/subframe/image/upload/v1723780719/uploads/302/lf4i2zybfw9xxl56w6ce.png"}
                         />
-                        <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
+                        <span className="truncate max-w-xs text-body-bold font-body-bold text-default-font" title={url.title}>
                           {url.title}
                         </span>
                       </div>
@@ -205,12 +207,12 @@ function BookshelfPage() {
                     </Table.Cell>
                     <Table.Cell>
                       <span className="whitespace-nowrap text-caption-bold font-caption-bold text-default-font">
-                        {url.author}
+                        {url.author || "-"}
                       </span>
                     </Table.Cell>
                     <Table.Cell>
                       <span className="whitespace-nowrap text-caption font-caption text-default-font">
-                        {url.date_published}
+                        {url.date_published || "N/A"}
                       </span>
                     </Table.Cell>
                   </Table.Row>
