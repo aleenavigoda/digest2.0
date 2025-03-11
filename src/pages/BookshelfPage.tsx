@@ -1,8 +1,6 @@
-
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DefaultPageLayout } from "../ui/layouts/DefaultPageLayout";
 import { Avatar } from "../ui/components/Avatar";
-import { createClient } from "@supabase/supabase-js";
 
 interface Bookshelf {
   id: string;
@@ -13,7 +11,7 @@ interface Bookshelf {
   created_at: string;
 }
 
-// Mock data to display while fixing Supabase connection
+// Mock data for bookshelf display
 const MOCK_BOOKSHELVES: Bookshelf[] = [
   {
     id: 'shelf-writing',
@@ -46,50 +44,9 @@ export default function BookshelfPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchBookshelves() {
-      try {
-        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-        const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-        
-        if (!supabaseUrl || !supabaseKey) {
-          console.error("Supabase URL or key is missing");
-          // Use mock data when Supabase credentials are missing
-          setBookshelves(MOCK_BOOKSHELVES);
-          setLoading(false);
-          return;
-        }
-        
-        const supabase = createClient(supabaseUrl, supabaseKey);
-        
-        try {
-          const { data, error } = await supabase
-            .from("bookshelves")
-            .select("*")
-            .order("created_at", { ascending: false });
-          
-          if (error) {
-            console.error("Error fetching bookshelves:", error);
-            // Use mock data when Supabase query fails
-            setBookshelves(MOCK_BOOKSHELVES);
-          } else {
-            console.log("Bookshelves fetched:", data);
-            setBookshelves(data && data.length > 0 ? data : MOCK_BOOKSHELVES);
-          }
-        } catch (fetchError) {
-          console.error("Failed to fetch from Supabase:", fetchError);
-          // Use mock data when fetch fails
-          setBookshelves(MOCK_BOOKSHELVES);
-        }
-      } catch (error) {
-        console.error("Failed to fetch bookshelves:", error);
-        // Use mock data on any other error
-        setBookshelves(MOCK_BOOKSHELVES);
-      } finally {
-        setLoading(false);
-      }
-    }
-    
-    fetchBookshelves();
+    // Simply use the mock data directly
+    setBookshelves(MOCK_BOOKSHELVES);
+    setLoading(false);
   }, []);
 
   return (
