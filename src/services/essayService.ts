@@ -12,7 +12,7 @@ export interface Essay {
 }
 
 // Mock data for essays to use as fallback
-const MOCK_ESSAYS: Essay[] = [
+export const MOCK_ESSAYS: Essay[] = [
   {
     id: '1',
     title: 'Children today are suffering a severe deficit of play',
@@ -20,7 +20,7 @@ const MOCK_ESSAYS: Essay[] = [
     author: 'Peter Gray',
     url: 'https://aeon.co/essays/children-today-are-suffering-a-severe-deficit-of-play',
     date_published: '2021-05-15',
-    image_url: 'https://res.cloudinary.com/subframe/image/upload/v1723780835/uploads/302/kr9usrdgbwp9cge3ab1f.png'
+    image_url: 'https://placehold.co/100x100?text=Play'
   },
   {
     id: '2',
@@ -29,7 +29,7 @@ const MOCK_ESSAYS: Essay[] = [
     author: 'Ross Andersen',
     url: 'https://aeon.co/essays/elon-musk-puts-his-case-for-a-multi-planet-civilisation',
     date_published: '2021-06-22',
-    image_url: 'https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?q=80&w=2070&auto=format&fit=crop'
+    image_url: 'https://placehold.co/100x100?text=Mars'
   },
   {
     id: '3',
@@ -38,25 +38,25 @@ const MOCK_ESSAYS: Essay[] = [
     author: 'Anna Machin',
     url: 'https://aeon.co/essays/the-devotion-of-the-human-dad-separates-us-from-other-apes',
     date_published: '2021-07-10',
-    image_url: 'https://images.unsplash.com/photo-1501155715159-ad2931d01578?q=80&w=2073&auto=format&fit=crop'
+    image_url: 'https://placehold.co/100x100?text=Apes'
   },
   {
     id: '4',
     title: 'How to write clearly and concisely',
     domain_name: 'Medium',
     author: 'James Clear',
-    url: 'https://medium.com/swlh/how-to-write-clearly-and-concisely-67dbba587cf8',
+    url: 'https://medium.com/example/how-to-write-clearly',
     date_published: '2022-01-15',
-    image_url: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=2073&auto=format&fit=crop'
+    image_url: 'https://placehold.co/100x100?text=Writing'
   },
   {
     id: '5',
     title: 'The future of artificial intelligence',
     domain_name: 'The Atlantic',
     author: 'Sarah Johnson',
-    url: 'https://www.theatlantic.com/technology/archive/2023/03/ai-chatgpt-future-artificial-intelligence/673335/',
+    url: 'https://theatlantic.com/example/ai-future',
     date_published: '2022-03-22',
-    image_url: 'https://images.unsplash.com/photo-1677442135968-6adaba1d850c?q=80&w=2832&auto=format&fit=crop'
+    image_url: 'https://placehold.co/100x100?text=AI'
   }
 ];
 
@@ -71,36 +71,42 @@ export async function getAllEssays(): Promise<Essay[]> {
 
     console.log('Attempting to fetch essays from Supabase...');
     
-    const { data, error } = await supabase
-      .from('all_urls')
-      .select('*')
-      .order('date_published', { ascending: false });
-    
-    if (error) {
-      console.error('Error fetching essays:', error);
-      return MOCK_ESSAYS; // Return mock data on error
-    }
-    
-    if (!data || data.length === 0) {
-      console.warn('No data returned from Supabase');
+    // Try to fetch real data with error handling
+    try {
+      const { data, error } = await supabase
+        .from('all_urls')
+        .select('*')
+        .order('date_published', { ascending: false });
+      
+      if (error) {
+        console.error('Error fetching essays:', error);
+        return MOCK_ESSAYS; // Return mock data on error
+      }
+      
+      if (!data || data.length === 0) {
+        console.warn('No data returned from Supabase');
+        return MOCK_ESSAYS;
+      }
+      
+      // Map the Supabase data to our Essay interface
+      const essays: Essay[] = data.map((item: any) => ({
+        id: item.id.toString(),
+        title: item.title || 'Untitled',
+        domain_name: item.domain_name || 'Unknown',
+        author: item.author || 'Anonymous',
+        url: item.url || '#',
+        date_published: item.date_published || new Date().toISOString().split('T')[0],
+        image_url: item.image_url || `https://placehold.co/100x100?text=${encodeURIComponent(item.title?.charAt(0) || 'E')}`
+      }));
+      
+      console.log('Successfully loaded essays:', essays.length);
+      return essays;
+    } catch (fetchError) {
+      console.error('Error in getAllEssays:', fetchError);
       return MOCK_ESSAYS;
     }
-
-    // Map the data from all_urls table to Essay interface
-    const essays: Essay[] = data.map(item => ({
-      id: item.id?.toString() || Math.random().toString(),
-      title: item.title || 'Untitled',
-      domain_name: item.domain_name || 'Unknown Source',
-      author: item.author || 'Unknown Author',
-      url: item.url || '#',
-      date_published: item.date_published || new Date().toISOString().substring(0, 10),
-      image_url: item.image_url || "https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2890&auto=format&fit=crop"
-    }));
-    
-    console.log('Successfully loaded essays:', essays.length);
-    return essays;
-  } catch (error) {
-    console.error('Error in getAllEssays:', error);
-    return MOCK_ESSAYS; // Return mock data on exception
+  } catch (outerError) {
+    console.error('Unexpected error in getAllEssays:', outerError);
+    return MOCK_ESSAYS;
   }
 }
