@@ -8,7 +8,7 @@ channel = "stable-24_05"
 run = ["sh", "-c", "npm run dev"]
 
 [workflows]
-runButton = "Dev Full Stack"
+runButton = "Run Dev Server"
 
 [[workflows.workflow]]
 name = "Production"
@@ -36,6 +36,14 @@ args = "npm run dev:full"
 
 [[workflows.workflow]]
 name = "dev:full"
+author = 39424427
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev:full"
+
+[[workflows.workflow]]
+name = "Run Dev Server"
 author = 39424427
 
 [[workflows.workflow.tasks]]
