@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -117,6 +118,7 @@ function BookshelfPage() {
       console.log("URL Data fetched:", urlData);
     }
   }, [urlData]);
+  
   return (
     <DefaultPageLayout>
       <div className="container max-w-none flex h-full w-full flex-col items-start gap-12 bg-default-background py-12">
@@ -126,39 +128,41 @@ function BookshelfPage() {
           </span>
           <div className="w-full overflow-x-auto pb-4">
             <div className="flex items-start gap-4" style={{ minWidth: 'min-content' }}>
-            {bookshelvesLoading ? (
-              <div className="w-full text-center py-8">Loading bookshelves...</div>
-            ) : bookshelves.length === 0 ? (
-              <div className="w-full text-center py-8">No bookshelves found. Run setup-neo4j script to add sample data.</div>
-            ) : (
-              bookshelves.map((shelf, index) => (
-                <div key={shelf.id} className="flex flex-col items-start gap-4 rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm" style={{ minWidth: '350px', maxWidth: '450px' }}>
-                  <div className="flex w-full items-center gap-4">
-                    <Avatar
-                      size="x-large"
-                      image={shelf.image_url || "https://res.cloudinary.com/subframe/image/upload/v1723780835/uploads/302/kr9usrdgbwp9cge3ab1f.png"}
-                    >
-                      {shelf.name.charAt(0)}
-                    </Avatar>
-                    <div className="flex grow shrink-0 basis-0 flex-col items-start gap-1">
-                      <span className="text-caption-bold font-caption-bold text-brand-700">
-                        {index === 0 ? "DIGEST" : "RADAR"}
-                      </span>
-                      <span className="text-heading-3 font-heading-3 text-default-font">
-                        {shelf.name}
+              {bookshelvesLoading ? (
+                <div className="w-full text-center py-8">Loading bookshelves...</div>
+              ) : bookshelves.length === 0 ? (
+                <div className="w-full text-center py-8">No bookshelves found. Run setup-neo4j script to add sample data.</div>
+              ) : (
+                bookshelves.map((shelf, index) => (
+                  <div key={shelf.id} className="flex flex-col items-start gap-4 rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm" style={{ minWidth: '350px', maxWidth: '450px' }}>
+                    <div className="flex w-full items-center gap-4">
+                      <Avatar
+                        size="x-large"
+                        image={shelf.image_url || "https://res.cloudinary.com/subframe/image/upload/v1723780835/uploads/302/kr9usrdgbwp9cge3ab1f.png"}
+                      >
+                        {shelf.name.charAt(0)}
+                      </Avatar>
+                      <div className="flex grow shrink-0 basis-0 flex-col items-start gap-1">
+                        <span className="text-caption-bold font-caption-bold text-brand-700">
+                          {index === 0 ? "DIGEST" : "RADAR"}
+                        </span>
+                        <span className="text-heading-3 font-heading-3 text-default-font">
+                          {shelf.name}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-start gap-4">
+                      <span className="text-body font-body text-subtext-color">
+                        {shelf.description}
                       </span>
                     </div>
                   </div>
-                  <div className="flex flex-col items-start gap-4">
-                    <span className="text-body font-body text-subtext-color">
-                      {shelf.description}
-                    </span>
-                  </div>
-                </div>
-              ))
-            )}
+                ))
+              )}
             </div>
           </div>
+        </div>
+        
         <div className="flex w-full flex-col items-start gap-6">
           <span className="w-full text-heading-2 font-heading-2 text-default-font">
             Browse all essays
