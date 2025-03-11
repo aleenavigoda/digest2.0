@@ -45,6 +45,7 @@ function BookshelfPage() {
       const { data, error } = await supabase
         .from('all_urls')
         .select('*')
+        .order('RANDOM()')
         .range((page - 1) * rowsPerPage, page * rowsPerPage - 1);
 
       if (error) {
