@@ -99,30 +99,35 @@ export async function createBookshelf(bookshelf: Bookshelf): Promise<Bookshelf> 
 
 // Get all public bookshelves
 export async function getPublicBookshelves(): Promise<Bookshelf[]> {
-  const session = createSession();
   try {
-    const result = await session.run(
-      `
-      MATCH (b:Bookshelf)
-      WHERE b.is_public = true
-      RETURN b
-      `
-    );
+    const session = createSession();
+    try {
+      const result = await session.run(
+        `
+        MATCH (b:Bookshelf)
+        WHERE b.is_public = true
+        RETURN b
+        `
+      );
 
-    return result.records.map(record => {
-      const bookshelf = record.get('b').properties;
-      // Convert Neo4j types to JavaScript types
-      return {
-        ...bookshelf,
-        is_public: Boolean(bookshelf.is_public),
-        created_at: bookshelf.created_at ? bookshelf.created_at.toString() : new Date().toISOString()
-      };
-    });
+      return result.records.map(record => {
+        const bookshelf = record.get('b').properties;
+        // Convert Neo4j types to JavaScript types
+        return {
+          ...bookshelf,
+          is_public: Boolean(bookshelf.is_public),
+          created_at: bookshelf.created_at ? bookshelf.created_at.toString() : new Date().toISOString()
+        };
+      });
+    } catch (error) {
+      console.error("Error fetching public bookshelves:", error);
+      return [];
+    } finally {
+      await session.close();
+    }
   } catch (error) {
-    console.error("Error fetching public bookshelves:", error);
+    console.error('Failed to create Neo4j session:', error);
     return [];
-  } finally {
-    await session.close();
   }
 }
 
