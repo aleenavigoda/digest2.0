@@ -1,6 +1,7 @@
+
 import neo4j from 'neo4j-driver';
 
-// Get environment variables - should be added to your .env file
+// Get environment variables from .env file
 const neo4jUri = import.meta.env.VITE_NEO4J_URI || '';
 const neo4jUser = import.meta.env.VITE_NEO4J_USER || '';
 const neo4jPassword = import.meta.env.VITE_NEO4J_PASSWORD || '';
@@ -19,8 +20,10 @@ const closeDriver = () => {
   driver.close();
 };
 
-// Add listener to close the driver when the app is terminated
-process.on('SIGTERM', closeDriver);
-process.on('SIGINT', closeDriver);
+// Browser-safe approach to process listeners
+if (typeof window === 'undefined' && typeof process !== 'undefined') {
+  process.on('SIGTERM', closeDriver);
+  process.on('SIGINT', closeDriver);
+}
 
 export default driver;
