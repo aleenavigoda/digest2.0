@@ -130,8 +130,8 @@ export default function BookshelfPage() {
 
   return (
     <DefaultPageLayout>
-      <div className="flex h-full flex-col items-start gap-6 p-10">
-        <div className="flex w-full flex-col items-start gap-4">
+      <div className="flex h-full flex-col items-start gap-4 p-6">
+        <div className="flex w-full flex-col items-start gap-2">
           <div className="flex w-full items-start justify-between">
             <div className="flex flex-col items-start gap-1">
               <h1 className="text-heading-1 font-heading-1 text-default-font">
@@ -150,25 +150,25 @@ export default function BookshelfPage() {
                 </div>
               ) : (
                 bookshelves.map((shelf, index) => (
-                  <div key={shelf.id} className="flex flex-col items-start gap-4 rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm hover:shadow-md transition-shadow" style={{ minWidth: '350px', width: '350px', flexShrink: 0 }}>
-                    <div className="flex w-full items-center gap-4">
+                  <div key={shelf.id} className="flex flex-col items-start gap-2 rounded-md border border-solid border-neutral-border bg-default-background p-4 shadow-sm hover:shadow-md transition-shadow" style={{ width: '280px', flexShrink: 0 }}>
+                    <div className="flex w-full items-center gap-3 mb-1">
                       <Avatar
-                        size="x-large"
+                        size="large"
                         image={shelf.image_url || "https://res.cloudinary.com/subframe/image/upload/v1723780835/uploads/302/kr9usrdgbwp9cge3ab1f.png"}
                       >
                         {shelf.name.charAt(0)}
                       </Avatar>
-                      <div className="flex grow shrink-0 basis-0 flex-col items-start gap-1">
+                      <div className="flex flex-col items-start">
                         <span className="text-caption-bold font-caption-bold text-brand-700">
                           {index === 0 ? "DIGEST" : "RADAR"}
                         </span>
-                        <span className="text-heading-3 font-heading-3 text-default-font">
+                        <span className="text-heading-4 font-heading-4 text-default-font">
                           {shelf.name}
                         </span>
                       </div>
                     </div>
-                    <div className="flex flex-col items-start gap-4">
-                      <span className="text-body font-body text-subtext-color">
+                    <div className="flex flex-col items-start">
+                      <span className="text-sm text-subtext-color">
                         {shelf.description}
                       </span>
                     </div>
@@ -180,17 +180,18 @@ export default function BookshelfPage() {
         </div>
 
         {/* Browse all essays section */}
-        <div className="flex w-full flex-col items-start gap-6">
+        <div className="flex w-full flex-col items-start gap-4 mt-6">
           <span className="w-full text-heading-2 font-heading-2 text-default-font">
             Browse all essays
           </span>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 mb-2">
             <SubframeCore.DropdownMenu.Root>
               <SubframeCore.DropdownMenu.Trigger asChild={true}>
                 <Button
                   variant="neutral-secondary"
                   icon="FeatherBlinds"
                   iconRight="FeatherChevronDown"
+                  size="small"
                   onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
                 >
                   All domains
@@ -221,13 +222,13 @@ export default function BookshelfPage() {
               </SubframeCore.DropdownMenu.Portal>
             </SubframeCore.DropdownMenu.Root>
             <TextField
-              className="h-auto grow shrink-0 basis-0"
+              className="h-auto grow"
               label=""
               helpText=""
               icon="FeatherSearch"
             >
               <TextField.Input
-                className="w-56 grow shrink-0 basis-0"
+                className="grow"
                 placeholder="What do you want to read?"
                 value={searchQuery}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(event.target.value)}
@@ -252,70 +253,77 @@ export default function BookshelfPage() {
                   <Table.Cell>
                     <div className="flex items-center gap-2">
                       <img
-                        className="h-6 w-6 flex-none rounded-md object-cover"
+                        className="h-5 w-5 flex-none rounded object-cover"
                         src={essay.image_url}
                         alt={essay.title}
                       />
-                      <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
+                      <span className="whitespace-nowrap text-sm font-medium text-default-font">
                         {essay.title}
                       </span>
                     </div>
                   </Table.Cell>
                   <Table.Cell>
-                    <span className="whitespace-nowrap text-caption-bold font-caption-bold text-success-700">
+                    <span className="whitespace-nowrap text-xs font-medium text-success-700">
                       {essay.domain_name}
                     </span>
                   </Table.Cell>
                   <Table.Cell>
-                    <span className="whitespace-nowrap text-caption-bold font-caption-bold text-default-font">
+                    <span className="whitespace-nowrap text-xs font-medium text-default-font">
                       {essay.author}
                     </span>
                   </Table.Cell>
                   <Table.Cell>
-                    <span className="whitespace-nowrap text-caption font-caption text-default-font">
+                    <span className="whitespace-nowrap text-xs text-default-font">
                       {essay.date_published}
                     </span>
                   </Table.Cell>
                 </Table.Row>
               ))}
             </Table>
-            <div className="flex w-full items-center justify-center gap-1 px-4 py-4">
+            <div className="flex w-full items-center justify-center gap-1 px-4 py-3">
               <div className="flex items-center justify-center gap-1">
                 <IconButton
+                  size="small"
                   icon="FeatherChevronFirst"
                   onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
                 />
                 <IconButton
+                  size="small"
                   icon="FeatherChevronLeft"
                   onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
                 />
               </div>
-              <div className="flex items-center justify-center gap-1">
+              <div className="flex items-center justify-center gap-1 mx-2">
                 <Button
+                  size="small"
                   variant="brand-secondary"
                   onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
                 >
                   1
                 </Button>
                 <Button
+                  size="small"
                   variant="neutral-tertiary"
                   onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
                 >
                   2
                 </Button>
                 <Button
+                  size="small"
                   variant="neutral-tertiary"
                   onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
                 >
                   3
                 </Button>
                 <Button
+                  size="small"
                   variant="neutral-tertiary"
                   onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
                 >
                   4
                 </Button>
                 <Button
+                  size="small"
                   variant="neutral-tertiary"
                   onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
                 >
@@ -324,10 +332,12 @@ export default function BookshelfPage() {
               </div>
               <div className="flex items-center justify-center gap-1">
                 <IconButton
+                  size="small"
                   icon="FeatherChevronRight"
                   onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
                 />
                 <IconButton
+                  size="small"
                   icon="FeatherChevronLast"
                   onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
                 />
