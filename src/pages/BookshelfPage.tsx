@@ -31,47 +31,31 @@ function BookshelfPage() {
   const fetchUrls = async (page: number) => {
     setLoading(true);
     try {
-      // Get total count of entries with titles
+      // Get total count of all entries
       const countResponse = await supabase
         .from('all_urls')
-        .select('*', { count: 'exact', head: true })
-        .not('title', 'is', null);
+        .select('*', { count: 'exact', head: true });
 
       const totalCount = countResponse.count || 0;
       const calculatedTotalPages = Math.ceil(totalCount / rowsPerPage);
       setTotalPages(calculatedTotalPages > 0 ? calculatedTotalPages : 1);
 
-      // Use the server-side random function if available
+      // Use simple query to get data - skipping the RPC function since it's not working
       const offset = (page - 1) * rowsPerPage;
       let essaysData = [];
 
-      // Try the RPC function first
-      const { data: rpcData, error: rpcError } = await supabase
-        .rpc('get_random_essays', { 
-          p_limit: rowsPerPage,
-          p_offset: offset
-        });
+      // Direct query getting all essays without filtering for titles initially
+      const { data: essayResults, error: queryError } = await supabase
+        .from('all_urls')
+        .select('*')
+        .order('id', { ascending: false })  // Use simple ordering by ID for consistency
+        .limit(rowsPerPage);
 
-      if (rpcError || !rpcData || rpcData.length === 0) {
-        console.error('Error with RPC function or no results returned:', rpcError);
-        console.log('Falling back to direct query with random ordering');
-
-        // Fallback to standard query with filter for entries with titles
-        const { data: fallbackData, error: fallbackError } = await supabase
-          .from('all_urls')
-          .select('*')
-          .not('title', 'is', null)  // Only get entries with titles
-          .order('random()')  // Use random ordering directly in the query
-          .limit(rowsPerPage);
-
-        if (fallbackError) {
-          console.error('Failed with fallback query:', fallbackError);
-        } else {
-          essaysData = fallbackData || [];
-        }
+      if (queryError) {
+        console.error('Failed to fetch essays:', queryError);
       } else {
-        // Filter out any null titles from RPC results
-        essaysData = rpcData.filter(item => item.title) || [];
+        essaysData = essayResults || [];
+        console.log('Raw essay data:', essaysData);
       }
 
       console.log(`Fetched ${essaysData.length} essays for page ${page}`);
