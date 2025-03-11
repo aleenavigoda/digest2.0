@@ -1,0 +1,161 @@
+[plugin:vite:esbuild] Transform failed with 18 errors:
+/home/runner/workspace/src/services/socialGraphService.ts:333:22: ERROR: Multiple exports with the same name "createUser"
+/home/runner/workspace/src/services/socialGraphService.ts:333:22: ERROR: The symbol "createUser" has already been declared
+/home/runner/workspace/src/services/socialGraphService.ts:356:22: ERROR: Multiple exports with the same name "createBookshelf"
+/home/runner/workspace/src/services/socialGraphService.ts:356:22: ERROR: The symbol "createBookshelf" has already been declared
+/home/runner/workspace/src/services/socialGraphService.ts:382:22: ERROR: Multiple exports with the same name "getPublicBookshelves"
+...
+/home/runner/workspace/src/services/socialGraphService.ts:333:22
+Multiple exports with the same name "createUser"
+331|  
+332|  // User operations
+333|  export async function createUser(user: User): Promise<User> {
+   |                        ^
+334|    const session = createSession();
+335|    try {
+
+The symbol "createUser" has already been declared
+331|  
+332|  // User operations
+333|  export async function createUser(user: User): Promise<User> {
+   |                        ^
+334|    const session = createSession();
+335|    try {
+
+Multiple exports with the same name "createBookshelf"
+354|  
+355|  // Bookshelf related operations
+356|  export async function createBookshelf(bookshelf: Bookshelf): Promise<Bookshelf> {
+   |                        ^
+357|    const session = createSession();
+358|    try {
+
+The symbol "createBookshelf" has already been declared
+354|  
+355|  // Bookshelf related operations
+356|  export async function createBookshelf(bookshelf: Bookshelf): Promise<Bookshelf> {
+   |                        ^
+357|    const session = createSession();
+358|    try {
+
+Multiple exports with the same name "getPublicBookshelves"
+380|  }
+381|  
+382|  export async function getPublicBookshelves(): Promise<Bookshelf[]> {
+   |                        ^
+383|    const session = createSession();
+384|    try {
+
+The symbol "getPublicBookshelves" has already been declared
+380|  }
+381|  
+382|  export async function getPublicBookshelves(): Promise<Bookshelf[]> {
+   |                        ^
+383|    const session = createSession();
+384|    try {
+
+Multiple exports with the same name "getUserBookshelves"
+399|  }
+400|  
+401|  export async function getUserBookshelves(userId: string): Promise<Bookshelf[]> {
+   |                        ^
+402|    const session = createSession();
+403|    try {
+
+The symbol "getUserBookshelves" has already been declared
+399|  }
+400|  
+401|  export async function getUserBookshelves(userId: string): Promise<Bookshelf[]> {
+   |                        ^
+402|    const session = createSession();
+403|    try {
+
+Multiple exports with the same name "addEssayToBookshelf"
+418|  
+419|  // Essay operations
+420|  export async function addEssayToBookshelf(bookshelfId: string, essay: Essay): Promise<void> {
+   |                        ^
+421|    const session = createSession();
+422|    try {
+
+The symbol "addEssayToBookshelf" has already been declared
+418|  
+419|  // Essay operations
+420|  export async function addEssayToBookshelf(bookshelfId: string, essay: Essay): Promise<void> {
+   |                        ^
+421|    const session = createSession();
+422|    try {
+
+Multiple exports with the same name "getBookshelfEssays"
+441|  }
+442|  
+443|  export async function getBookshelfEssays(bookshelfId: string): Promise<Essay[]> {
+   |                        ^
+444|    const session = createSession();
+445|    try {
+
+The symbol "getBookshelfEssays" has already been declared
+441|  }
+442|  
+443|  export async function getBookshelfEssays(bookshelfId: string): Promise<Essay[]> {
+   |                        ^
+444|    const session = createSession();
+445|    try {
+
+Multiple exports with the same name "createFriendship"
+459|  
+460|  // Friend connections
+461|  export async function createFriendship(userId1: string, userId2: string): Promise<void> {
+   |                        ^
+462|    const session = createSession();
+463|    try {
+
+The symbol "createFriendship" has already been declared
+459|  
+460|  // Friend connections
+461|  export async function createFriendship(userId1: string, userId2: string): Promise<void> {
+   |                        ^
+462|    const session = createSession();
+463|    try {
+
+Multiple exports with the same name "getUserFriends"
+476|  }
+477|  
+478|  export async function getUserFriends(userId: string): Promise<User[]> {
+   |                        ^
+479|    const session = createSession();
+480|    try {
+
+The symbol "getUserFriends" has already been declared
+476|  }
+477|  
+478|  export async function getUserFriends(userId: string): Promise<User[]> {
+   |                        ^
+479|    const session = createSession();
+480|    try {
+
+Multiple exports with the same name "addCollaborator"
+494|  
+495|  // Collaborative bookshelves
+496|  export async function addCollaborator(bookshelfId: string, userId: string): Promise<void> {
+   |                        ^
+497|    const session = createSession();
+498|    try {
+
+The symbol "addCollaborator" has already been declared
+494|  
+495|  // Collaborative bookshelves
+496|  export async function addCollaborator(bookshelfId: string, userId: string): Promise<void> {
+   |                        ^
+497|    const session = createSession();
+498|    try {
+    at failureErrorWithLog (/home/runner/workspace/node_modules/esbuild/lib/main.js:1472:15)
+    at /home/runner/workspace/node_modules/esbuild/lib/main.js:755:50
+    at responseCallbacks.<computed> (/home/runner/workspace/node_modules/esbuild/lib/main.js:622:9)
+    at handleIncomingPacket (/home/runner/workspace/node_modules/esbuild/lib/main.js:677:12)
+    at Socket.readFromStdout (/home/runner/workspace/node_modules/esbuild/lib/main.js:600:7)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:191:23
