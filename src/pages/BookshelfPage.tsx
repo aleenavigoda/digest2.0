@@ -7,7 +7,7 @@ import { TextField } from "../ui/components/TextField";
 import { Table } from "../ui/components/Table";
 import { IconButton } from "../ui/components/IconButton";
 import { DropdownMenu } from "../ui/components/DropdownMenu";
-import * as SubframeCore from "@subframe/core-ui";
+import * as SubframeCore from "@subframe/core";
 
 interface Bookshelf {
   id: string;
