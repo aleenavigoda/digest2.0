@@ -84,27 +84,30 @@ export async function getAllEssays(): Promise<Essay[]> {
     // Check if we have actual data
     if (data && data.length > 0) {
       console.log('Successfully fetched', data.length, 'essays from all_urls table');
+    
+      // Map the Supabase data to our Essay interface
+      const essays: Essay[] = data.map((item: any) => ({
+        id: item.id?.toString() || Math.random().toString(36).substring(2, 9),
+        title: item.title || 'Untitled',
+        domain_name: item.domain_name || 'Unknown',
+        author: item.author || 'Anonymous',
+        url: item.url || '#',
+        date_published: item.date_published || new Date().toISOString().split('T')[0],
+        image_url: item.image_url || `https://placehold.co/100x100?text=${encodeURIComponent((item.title?.charAt(0) || 'E').toUpperCase())}`
+      }));
 
+      console.log('Successfully loaded essays from Supabase:', essays.length);
+
+      // Return real data
+      return essays;
+    }
+    
     if (!data || data.length === 0) {
       console.warn('No data returned from Supabase');
       return MOCK_ESSAYS;
     }
-
-    // Map the Supabase data to our Essay interface
-    const essays: Essay[] = data.map((item: any) => ({
-      id: item.id?.toString() || Math.random().toString(36).substring(2, 9),
-      title: item.title || 'Untitled',
-      domain_name: item.domain_name || 'Unknown',
-      author: item.author || 'Anonymous',
-      url: item.url || '#',
-      date_published: item.date_published || new Date().toISOString().split('T')[0],
-      image_url: item.image_url || `https://placehold.co/100x100?text=${encodeURIComponent((item.title?.charAt(0) || 'E').toUpperCase())}`
-    }));
-
-    console.log('Successfully loaded essays from Supabase:', essays.length);
-
-    // Return real data
-    return essays;
+    
+    return MOCK_ESSAYS;
   } catch (error) {
     console.error('Unexpected error in getAllEssays:', error);
     return MOCK_ESSAYS;
