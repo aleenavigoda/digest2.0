@@ -71,10 +71,11 @@ export async function getAllEssays(): Promise<Essay[]> {
     console.log('Attempting to fetch essays from Supabase...');
     
     // Query directly from all_urls table since we know it exists
+    // Use a higher limit to fetch more essays, but not too high to avoid performance issues
     const { data, error } = await supabase
       .from('all_urls')
       .select('*')
-      .limit(20); // Limit to 20 rows for faster response
+      .limit(500); // Increased from 20 to 500 to get more content
 
     if (error) {
       console.error('Error fetching essays from all_urls table:', error);
@@ -86,7 +87,7 @@ export async function getAllEssays(): Promise<Essay[]> {
       console.log('Successfully fetched', data.length, 'essays from all_urls table');
     
       // Map the Supabase data to our Essay interface
-      const essays: Essay[] = data.map((item: any) => ({
+      let essays: Essay[] = data.map((item: any) => ({
         id: item.id?.toString() || Math.random().toString(36).substring(2, 9),
         title: item.title || 'Untitled',
         domain_name: item.domain_name || 'Unknown',
@@ -95,6 +96,9 @@ export async function getAllEssays(): Promise<Essay[]> {
         date_published: item.date_published || new Date().toISOString().split('T')[0],
         // Remove image_url field as we'll generate colors dynamically
       }));
+      
+      // Randomize the essays order
+      essays = essays.sort(() => Math.random() - 0.5);
 
       console.log('Successfully loaded essays from Supabase:', essays.length);
 

@@ -80,11 +80,14 @@ function BookshelfPage() {
     essay.domain_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Paginate essays
+  // Paginate essays - optimized for larger dataset
   const indexOfLastEssay = currentPage * itemsPerPage;
   const indexOfFirstEssay = indexOfLastEssay - itemsPerPage;
   const currentEssays = filteredEssays.slice(indexOfFirstEssay, indexOfLastEssay);
   const totalPages = Math.ceil(filteredEssays.length / itemsPerPage);
+  
+  // For very large datasets, limit the maximum visible pages to improve performance
+  const maxVisiblePages = Math.min(totalPages, 100);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
