@@ -1,0 +1,72 @@
+[plugin:vite:esbuild] Transform failed with 7 errors:
+/home/runner/workspace/src/lib/neo4j.ts:30:6: ERROR: The symbol "neo4jUri" has already been declared
+/home/runner/workspace/src/lib/neo4j.ts:31:6: ERROR: The symbol "neo4jUser" has already been declared
+/home/runner/workspace/src/lib/neo4j.ts:32:6: ERROR: The symbol "neo4jPassword" has already been declared
+/home/runner/workspace/src/lib/neo4j.ts:34:6: ERROR: The symbol "driver" has already been declared
+/home/runner/workspace/src/lib/neo4j.ts:39:13: ERROR: Multiple exports with the same name "createSession"
+...
+/home/runner/workspace/src/lib/neo4j.ts:30:6
+The symbol "neo4jUri" has already been declared
+28 |  import neo4j from 'neo4j-driver';
+29 |  
+30 |  const neo4jUri = import.meta.env.VITE_NEO4J_URI || '';
+   |        ^
+31 |  const neo4jUser = import.meta.env.VITE_NEO4J_USER || '';
+32 |  const neo4jPassword = import.meta.env.VITE_NEO4J_PASSWORD || '';
+
+The symbol "neo4jUser" has already been declared
+29 |  
+30 |  const neo4jUri = import.meta.env.VITE_NEO4J_URI || '';
+31 |  const neo4jUser = import.meta.env.VITE_NEO4J_USER || '';
+   |        ^
+32 |  const neo4jPassword = import.meta.env.VITE_NEO4J_PASSWORD || '';
+33 |  
+
+The symbol "neo4jPassword" has already been declared
+30 |  const neo4jUri = import.meta.env.VITE_NEO4J_URI || '';
+31 |  const neo4jUser = import.meta.env.VITE_NEO4J_USER || '';
+32 |  const neo4jPassword = import.meta.env.VITE_NEO4J_PASSWORD || '';
+   |        ^
+33 |  
+34 |  const driver = neo4j.driver(
+
+The symbol "driver" has already been declared
+32 |  const neo4jPassword = import.meta.env.VITE_NEO4J_PASSWORD || '';
+33 |  
+34 |  const driver = neo4j.driver(
+   |        ^
+35 |    neo4jUri,
+36 |    neo4j.auth.basic(neo4jUser, neo4jPassword)
+
+Multiple exports with the same name "createSession"
+37 |  );
+38 |  
+39 |  export const createSession = () => driver.session();
+   |               ^
+40 |  
+41 |  export default driver;
+
+The symbol "createSession" has already been declared
+37 |  );
+38 |  
+39 |  export const createSession = () => driver.session();
+   |               ^
+40 |  
+41 |  export default driver;
+
+Multiple exports with the same name "default"
+39 |  export const createSession = () => driver.session();
+40 |  
+41 |  export default driver;
+   |         ^
+42 |
+    at failureErrorWithLog (/home/runner/workspace/node_modules/esbuild/lib/main.js:1472:15)
+    at /home/runner/workspace/node_modules/esbuild/lib/main.js:755:50
+    at responseCallbacks.<computed> (/home/runner/workspace/node_modules/esbuild/lib/main.js:622:9)
+    at handleIncomingPacket (/home/runner/workspace/node_modules/esbuild/lib/main.js:677:12)
+    at Socket.readFromStdout (/home/runner/workspace/node_modules/esbuild/lib/main.js:600:7)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:191:23
