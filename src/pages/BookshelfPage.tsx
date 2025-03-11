@@ -261,35 +261,68 @@ function BookshelfPage() {
                 />
               </div>
               <div className="flex items-center justify-center gap-1">
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                  // Calculate which pages to show based on current page
-                  let pageNum = i + 1;
-                  if (currentPage > 3 && totalPages > 5) {
-                    pageNum = Math.min(currentPage - 2 + i, totalPages);
-                    if (i === 0 && currentPage > 3) {
-                      pageNum = 1; // First page
-                    } else if (i === 1 && currentPage > 4) {
-                      return (
-                        <span key="ellipsis-1" className="px-2">...</span>
-                      );
-                    } else if (i === 4 && currentPage < totalPages - 2) {
-                      return (
-                        <span key="ellipsis-2" className="px-2">...</span>
-                      );
-                    } else if (i === 4) {
-                      pageNum = totalPages; // Last page
-                    }
-                  }
-                  return (
+                {(() => {
+                  const visiblePages = [];
+                  const maxVisiblePages = 5;
+                  
+                  // Always show first page
+                  visiblePages.push(
                     <Button
-                      key={pageNum}
-                      variant={currentPage === pageNum ? "brand-secondary" : "neutral-tertiary"}
-                      onClick={() => setCurrentPage(pageNum)}
+                      key="page-1"
+                      variant={currentPage === 1 ? "brand-secondary" : "neutral-tertiary"}
+                      onClick={() => setCurrentPage(1)}
                     >
-                      {pageNum}
+                      1
                     </Button>
                   );
-                })}
+                  
+                  // Add ellipsis after first page if needed
+                  if (currentPage > 3) {
+                    visiblePages.push(
+                      <span key="ellipsis-start" className="px-2">...</span>
+                    );
+                  }
+                  
+                  // Add pages around current page
+                  const startPage = Math.max(2, currentPage - 1);
+                  const endPage = Math.min(totalPages - 1, currentPage + 1);
+                  
+                  for (let i = startPage; i <= endPage; i++) {
+                    if (i > 1 && i < totalPages) {
+                      visiblePages.push(
+                        <Button
+                          key={`page-${i}`}
+                          variant={currentPage === i ? "brand-secondary" : "neutral-tertiary"}
+                          onClick={() => setCurrentPage(i)}
+                        >
+                          {i}
+                        </Button>
+                      );
+                    }
+                  }
+                  
+                  // Add ellipsis before last page if needed
+                  if (currentPage < totalPages - 2) {
+                    visiblePages.push(
+                      <span key="ellipsis-end" className="px-2">...</span>
+                    );
+                  }
+                  
+                  // Always show last page if there's more than one page
+                  if (totalPages > 1) {
+                    visiblePages.push(
+                      <Button
+                        key={`page-${totalPages}`}
+                        variant={currentPage === totalPages ? "brand-secondary" : "neutral-tertiary"}
+                        onClick={() => setCurrentPage(totalPages)}
+                      >
+                        {totalPages}
+                      </Button>
+                    );
+                  }
+                  
+                  return visiblePages;
+                })()}
               </div>
               <div className="flex items-center justify-center gap-1">
                 <IconButton
