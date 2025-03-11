@@ -51,21 +51,7 @@ function BookshelfPage() {
 
       if (error) {
         console.error('Error fetching URLs:', error);
-        console.log('Falling back to standard query with random ordering');
-        
-        // Fallback to standard query with ORDER BY RANDOM()
-        const { data: fallbackData, error: fallbackError } = await supabase
-          .from('all_urls')
-          .select('*')
-          .order('id') // Using simple ordering as fallback
-          .limit(rowsPerPage)
-          .range(offset, offset + rowsPerPage - 1);
-          
-        if (fallbackError) {
-          console.error('Failed to fetch URLs:', fallbackError);
-        } else {
-          setUrlData(fallbackData || []);
-        }
+        console.log('Falling back to standard query with ordering');
         
         // Fallback to standard query if the RPC fails for any reason
         const { data: fallbackData, error: fallbackError } = await supabase
