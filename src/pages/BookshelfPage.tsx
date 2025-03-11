@@ -220,14 +220,13 @@ function BookshelfPage() {
                     <Table.Cell>
                       <div className="flex items-center gap-2">
                         <div 
-                          className="h-6 w-6 flex-none rounded-md flex items-center justify-center text-white"
+                          className="h-6 w-6 flex-none rounded-md"
                           style={{
                             background: `linear-gradient(135deg, 
                               hsl(${essay.title.charCodeAt(0) % 360}, 70%, 50%), 
                               hsl(${(essay.title.charCodeAt(0) + 40) % 360}, 70%, 50%))`,
                           }}
                         >
-                          {essay.title.charAt(0).toUpperCase()}
                         </div>
                         <a 
                           href={essay.url} 
