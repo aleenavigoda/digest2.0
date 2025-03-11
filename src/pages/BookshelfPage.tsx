@@ -157,8 +157,8 @@ function BookshelfPage() {
                 </div>
               ))
             )}
+            </div>
           </div>
-        </div>
         <div className="flex w-full flex-col items-start gap-6">
           <span className="w-full text-heading-2 font-heading-2 text-default-font">
             Browse all essays
