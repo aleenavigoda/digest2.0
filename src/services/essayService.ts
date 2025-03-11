@@ -54,14 +54,20 @@ const MOCK_ESSAYS: Essay[] = [
     title: "The future of artificial intelligence",
     domain_name: "The Atlantic",
     author: "Sarah Johnson",
-    url: "https://theatlantic.com/example/ai-future",
+    url: "https://www.theatlantic.com/example/ai-future",
     date_published: "2022-03-22",
-    image_url: "https://images.unsplash.com/photo-1677442135146-92ed59a10772?q=80&w=2070&auto=format&fit=crop"
+    image_url: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2940&auto=format&fit=crop"
   }
 ];
 
 export async function getAllEssays(): Promise<Essay[]> {
   try {
+    // Check if supabase client is properly initialized
+    if (!supabase) {
+      console.error('Supabase client not initialized');
+      return MOCK_ESSAYS;
+    }
+
     const { data, error } = await supabase
       .from('all_urls')
       .select('*')
@@ -72,7 +78,23 @@ export async function getAllEssays(): Promise<Essay[]> {
       return MOCK_ESSAYS; // Return mock data on error
     }
     
-    return data as Essay[];
+    if (!data || data.length === 0) {
+      console.warn('No data returned from Supabase');
+      return MOCK_ESSAYS;
+    }
+
+    // Map the data from all_urls table to Essay interface
+    const essays: Essay[] = data.map(item => ({
+      id: item.id?.toString() || Math.random().toString(),
+      title: item.title || 'Untitled',
+      domain_name: item.domain_name || 'Unknown Source',
+      author: item.author || 'Unknown Author',
+      url: item.url || '#',
+      date_published: item.date_published || new Date().toISOString().substring(0, 10),
+      image_url: item.image_url || "https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2890&auto=format&fit=crop"
+    }));
+    
+    return essays;
   } catch (error) {
     console.error('Error in getAllEssays:', error);
     return MOCK_ESSAYS; // Return mock data on exception

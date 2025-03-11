@@ -43,9 +43,10 @@ function BookshelfPage() {
         setEssaysLoading(true);
         const data = await getAllEssays();
         if (data && data.length > 0) {
+          console.log('Successfully loaded essays:', data.length);
           setEssays(data);
         } else {
-          console.error('No essays data returned');
+          console.warn('No essays data returned, using mock data');
         }
       } catch (error) {
         console.error('Error fetching essays:', error);
