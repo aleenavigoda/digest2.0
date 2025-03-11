@@ -1,4 +1,3 @@
-
 import { supabase } from '../lib/supabase';
 
 export interface Essay {
@@ -70,43 +69,40 @@ export async function getAllEssays(): Promise<Essay[]> {
     }
 
     console.log('Attempting to fetch essays from Supabase...');
-    
+
     // Try to fetch real data with error handling
-    try {
-      const { data, error } = await supabase
-        .from('all_urls')
-        .select('*')
-        .order('date_published', { ascending: false });
-      
-      if (error) {
-        console.error('Error fetching essays:', error);
-        return MOCK_ESSAYS; // Return mock data on error
-      }
-      
-      if (!data || data.length === 0) {
-        console.warn('No data returned from Supabase');
-        return MOCK_ESSAYS;
-      }
-      
-      // Map the Supabase data to our Essay interface
-      const essays: Essay[] = data.map((item: any) => ({
-        id: item.id.toString(),
-        title: item.title || 'Untitled',
-        domain_name: item.domain_name || 'Unknown',
-        author: item.author || 'Anonymous',
-        url: item.url || '#',
-        date_published: item.date_published || new Date().toISOString().split('T')[0],
-        image_url: item.image_url || `https://placehold.co/100x100?text=${encodeURIComponent(item.title?.charAt(0) || 'E')}`
-      }));
-      
-      console.log('Successfully loaded essays:', essays.length);
-      return essays;
-    } catch (fetchError) {
-      console.error('Error in getAllEssays:', fetchError);
+    const { data, error } = await supabase
+      .from('all_urls')
+      .select('*')
+      .limit(20); // Limit to 20 rows for faster response
+
+    if (error) {
+      console.error('Error fetching essays:', error);
+      return MOCK_ESSAYS; // Return mock data on error
+    }
+
+    if (!data || data.length === 0) {
+      console.warn('No data returned from Supabase');
       return MOCK_ESSAYS;
     }
-  } catch (outerError) {
-    console.error('Unexpected error in getAllEssays:', outerError);
+
+    // Map the Supabase data to our Essay interface
+    const essays: Essay[] = data.map((item: any) => ({
+      id: item.id?.toString() || Math.random().toString(36).substring(2, 9),
+      title: item.title || 'Untitled',
+      domain_name: item.domain_name || 'Unknown',
+      author: item.author || 'Anonymous',
+      url: item.url || '#',
+      date_published: item.date_published || new Date().toISOString().split('T')[0],
+      image_url: item.image_url || `https://placehold.co/100x100?text=${encodeURIComponent((item.title?.charAt(0) || 'E').toUpperCase())}`
+    }));
+
+    console.log('Successfully loaded essays from Supabase:', essays.length);
+
+    // Return real data
+    return essays;
+  } catch (error) {
+    console.error('Unexpected error in getAllEssays:', error);
     return MOCK_ESSAYS;
   }
 }

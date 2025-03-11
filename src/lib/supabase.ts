@@ -5,9 +5,9 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Log for debugging
-console.log('Supabase URL available:', !!supabaseUrl);
-console.log('Supabase Key available:', !!supabaseKey);
+// Log for debugging - show partial key to verify correct key is loaded
+console.log('Supabase URL:', supabaseUrl);
+console.log('Supabase Key (first 10 chars):', supabaseKey ? supabaseKey.substring(0, 10) + '...' : 'not available');
 
 // Create Supabase client with proper error handling
 let supabase = null;

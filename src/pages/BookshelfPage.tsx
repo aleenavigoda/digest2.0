@@ -41,22 +41,29 @@ function BookshelfPage() {
     const fetchEssays = async () => {
       try {
         setEssaysLoading(true);
-        console.log('Fetching essays data...');
-        
-        // Force using MOCK_ESSAYS for now to ensure we have data rendering
-        // Comment out this line when Supabase connection is working
-        // setEssays(MOCK_ESSAYS);
+        console.log('Fetching essays data from Supabase...');
         
         // Try to get real data
         const data = await getAllEssays();
         console.log('Essay data received:', data ? data.length : 0, 'items');
         
-        // Always set the data - getAllEssays will return MOCK_ESSAYS on error
-        setEssays(data);
+        if (data && data.length > 0) {
+          // Only use the data if it's not empty
+          console.log('Using real Supabase data');
+          setEssays(data);
+        } else {
+          console.warn('No data from Supabase, using mock data');
+          // Using import prevents potential circular dependency
+          import('../services/essayService').then(module => {
+            setEssays(module.MOCK_ESSAYS);
+          });
+        }
       } catch (error) {
         console.error('Error in essay fetch effect:', error);
         // Fallback to mock data if something goes wrong
-        setEssays(MOCK_ESSAYS);
+        import('../services/essayService').then(module => {
+          setEssays(module.MOCK_ESSAYS);
+        });
       } finally {
         setEssaysLoading(false);
       }
