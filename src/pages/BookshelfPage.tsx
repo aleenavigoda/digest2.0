@@ -225,7 +225,7 @@ function BookshelfPage() {
                           src={url.image_url || "https://res.cloudinary.com/subframe/image/upload/v1723780719/uploads/302/lf4i2zybfw9xxl56w6ce.png"}
                         />
                         <span className="truncate max-w-xs text-body-bold font-body-bold text-default-font" title={url.title}>
-                          {url.title}
+                          {url.title || `Entry ${url.id}`}
                         </span>
                       </div>
                     </Table.Cell>
