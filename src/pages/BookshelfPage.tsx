@@ -134,15 +134,24 @@ function BookshelfPage() {
               Scroll horizontally to see more
             </span>
           </div>
-          <div className="w-full overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-neutral-border scrollbar-track-transparent">
-            <div className="flex items-start gap-4 py-2" style={{ minWidth: 'max-content', paddingLeft: '4px', paddingRight: '4px' }}>
-              {bookshelvesLoading ? (
-                <div className="w-full text-center py-8">Loading bookshelves...</div>
-              ) : bookshelves.length === 0 ? (
-                <div className="w-full text-center py-8">No bookshelves found. Run setup-neo4j script to add sample data.</div>
-              ) : (
-                bookshelves.map((shelf, index) => (
-                  <div key={shelf.id} className="flex flex-col items-start gap-4 rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm hover:shadow-md transition-shadow" style={{ minWidth: '350px', width: '350px', flexShrink: 0 }}>
+          <div className="relative w-full pb-4">
+            {/* Gradient overlay for right side to indicate more content */}
+            <div className="absolute right-0 top-0 h-full w-16 z-10 bg-gradient-to-l from-default-background to-transparent pointer-events-none"></div>
+            {/* Right arrow indicator */}
+            <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 text-brand-600">
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </div>
+            <div className="w-full overflow-x-auto scrollbar-thin scrollbar-thumb-neutral-border scrollbar-track-transparent pb-2">
+              <div className="flex items-start gap-6 py-2 px-2">
+                {bookshelvesLoading ? (
+                  <div className="w-full text-center py-8">Loading bookshelves...</div>
+                ) : bookshelves.length === 0 ? (
+                  <div className="w-full text-center py-8">No bookshelves found. Run setup-neo4j script to add sample data.</div>
+                ) : (
+                  bookshelves.map((shelf, index) => (
+                    <div key={shelf.id} className="flex flex-col items-start gap-4 rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm hover:shadow-md transition-shadow" style={{ minWidth: '350px', width: '350px', flexShrink: 0 }}>
                     <div className="flex w-full items-center gap-4">
                       <Avatar
                         size="x-large"
