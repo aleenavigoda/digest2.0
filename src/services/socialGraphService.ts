@@ -1,6 +1,6 @@
 import { createSession } from '../lib/neo4j';
 
-// Type definitions
+// Define the types first
 export interface User {
   id: string;
   name: string;
@@ -22,8 +22,8 @@ export interface Essay {
   id: number;
   title: string;
   domain_name: string;
-  author: string;
-  url: string;
+  author?: string;
+  url?: string;
   date_published?: string;
   image_url?: string;
 }
@@ -51,22 +51,20 @@ export async function createUser(user: User): Promise<User> {
   }
 }
 
-export async function getUserById(id: string): Promise<User | null> {
+// Create friendship between users
+export async function createFriendship(userId1: string, userId2: string): Promise<void> {
   const session = createSession();
   try {
-    const result = await session.run(
+    await session.run(
       `
-      MATCH (u:User {id: $id})
-      RETURN u
+      MATCH (u1:User {id: $userId1})
+      MATCH (u2:User {id: $userId2})
+      WHERE u1 <> u2
+      CREATE (u1)-[:FRIEND]->(u2)
+      CREATE (u2)-[:FRIEND]->(u1)
       `,
-      { id }
+      { userId1, userId2 }
     );
-
-    if (result.records.length === 0) {
-      return null;
-    }
-
-    return result.records[0].get('u').properties as User;
   } finally {
     await session.close();
   }
@@ -128,6 +126,7 @@ export async function getPublicBookshelves(): Promise<Bookshelf[]> {
   }
 }
 
+// Get bookshelves owned by a user
 export async function getUserBookshelves(userId: string): Promise<Bookshelf[]> {
   const session = createSession();
   try {
@@ -135,6 +134,7 @@ export async function getUserBookshelves(userId: string): Promise<Bookshelf[]> {
       `
       MATCH (u:User {id: $userId})-[:OWNS]->(b:Bookshelf)
       RETURN b
+      ORDER BY b.created_at DESC
       `,
       { userId }
     );
@@ -160,8 +160,14 @@ export async function addEssayToBookshelf(bookshelfId: string, essay: Essay): Pr
       `
       MATCH (b:Bookshelf {id: $bookshelfId})
       MERGE (e:Essay {id: $essay.id})
-      ON CREATE SET e = $essay
-      CREATE (b)-[:CONTAINS]->(e)
+      ON CREATE SET 
+        e.title = $essay.title,
+        e.domain_name = $essay.domain_name,
+        e.author = $essay.author,
+        e.url = $essay.url,
+        e.date_published = $essay.date_published,
+        e.image_url = $essay.image_url
+      MERGE (b)-[:CONTAINS]->(e)
       `,
       { bookshelfId, essay }
     );
@@ -170,6 +176,7 @@ export async function addEssayToBookshelf(bookshelfId: string, essay: Essay): Pr
   }
 }
 
+// Get essays in a bookshelf
 export async function getBookshelfEssays(bookshelfId: string): Promise<Essay[]> {
   const session = createSession();
   try {
@@ -187,22 +194,45 @@ export async function getBookshelfEssays(bookshelfId: string): Promise<Essay[]> 
   }
 }
 
-// Friend connections
-export async function createFriendship(userId1: string, userId2: string): Promise<void> {
+// Add a collaborator to a bookshelf
+export async function addCollaborator(bookshelfId: string, userId: string): Promise<void> {
   const session = createSession();
   try {
     await session.run(
       `
-      MATCH (u1:User {id: $userId1}), (u2:User {id: $userId2})
-      CREATE (u1)-[:FRIEND]->(u2)
+      MATCH (b:Bookshelf {id: $bookshelfId})
+      MATCH (u:User {id: $userId})
+      MERGE (u)-[:CAN_EDIT]->(b)
       `,
-      { userId1, userId2 }
+      { bookshelfId, userId }
     );
   } finally {
     await session.close();
   }
 }
 
+export async function getUserById(id: string): Promise<User | null> {
+  const session = createSession();
+  try {
+    const result = await session.run(
+      `
+      MATCH (u:User {id: $id})
+      RETURN u
+      `,
+      { id }
+    );
+
+    if (result.records.length === 0) {
+      return null;
+    }
+
+    return result.records[0].get('u').properties as User;
+  } finally {
+    await session.close();
+  }
+}
+
+// Friend connections
 export async function getUserFriends(userId: string): Promise<User[]> {
   const session = createSession();
   try {
@@ -215,22 +245,6 @@ export async function getUserFriends(userId: string): Promise<User[]> {
     );
 
     return result.records.map(record => record.get('friend').properties as User);
-  } finally {
-    await session.close();
-  }
-}
-
-// Collaborative bookshelves
-export async function addCollaborator(bookshelfId: string, userId: string): Promise<void> {
-  const session = createSession();
-  try {
-    await session.run(
-      `
-      MATCH (b:Bookshelf {id: $bookshelfId}), (u:User {id: $userId})
-      CREATE (u)-[:CAN_EDIT]->(b)
-      `,
-      { bookshelfId, userId }
-    );
   } finally {
     await session.close();
   }
