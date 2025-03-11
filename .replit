@@ -8,7 +8,7 @@ channel = "stable-24_05"
 run = ["sh", "-c", "npm run dev"]
 
 [workflows]
-runButton = "Run"
+runButton = "Dev Full Stack"
 
 [[workflows.workflow]]
 name = "Production"
@@ -25,6 +25,14 @@ author = 39424427
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run dev"
+
+[[workflows.workflow]]
+name = "Dev Full Stack"
+author = 39424427
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev:full"
 
 [[ports]]
 localPort = 5173
