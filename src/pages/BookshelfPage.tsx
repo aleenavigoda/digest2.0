@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { DefaultPageLayout } from "../ui/layouts/DefaultPageLayout";
 import { Avatar } from "../ui/components/Avatar";
@@ -8,125 +7,69 @@ import { Table } from "../ui/components/Table";
 import { IconButton } from "../ui/components/IconButton";
 import { DropdownMenu } from "../ui/components/DropdownMenu";
 import * as SubframeCore from "@subframe/core";
-
-interface Bookshelf {
-  id: string;
-  name: string;
-  description: string;
-  image_url: string | null;
-  is_public: boolean;
-  created_at: string;
-}
-
-interface Essay {
-  id: string;
-  title: string;
-  domain_name: string;
-  author: string;
-  url: string;
-  date_published: string;
-  image_url?: string;
-}
-
-// Mock data for bookshelf display
-const MOCK_BOOKSHELVES: Bookshelf[] = [
-  {
-    id: 'shelf-writing',
-    name: 'Writing on Writing',
-    description: 'The best essays from the best essayists on improving your craft, finding your audience, and owning your voice.',
-    image_url: 'https://res.cloudinary.com/subframe/image/upload/v1723780835/uploads/302/kr9usrdgbwp9cge3ab1f.png',
-    is_public: true,
-    created_at: '2023-01-01T00:00:00.000Z'
-  },
-  {
-    id: 'shelf-climate',
-    name: 'Climate & Care',
-    description: 'How can we re-write ecologies of care through the lens of indigenous heritage and the earth\'s natural primitives?',
-    image_url: 'https://res.cloudinary.com/subframe/image/upload/v1723780859/uploads/302/hh4s5xjmsigiehqkb1uh.png',
-    is_public: true,
-    created_at: '2023-01-02T00:00:00.000Z'
-  }
-];
-
-// Mock data for essays
-const MOCK_ESSAYS: Essay[] = [
-  {
-    id: '1',
-    title: 'I can tolerate anything except the outgroup',
-    domain_name: 'Slate Star Codex',
-    author: 'Scott Alexander',
-    url: 'https://slatestarcodex.com/2014/09/30/i-can-tolerate-anything-except-the-outgroup/',
-    date_published: '9/20/14',
-    image_url: 'https://res.cloudinary.com/subframe/image/upload/v1723780719/uploads/302/lf4i2zybfw9xxl56w6ce.png'
-  },
-  {
-    id: '2',
-    title: 'Information Asymmetry is Power',
-    domain_name: 'chrisgillett.org',
-    author: 'Chris Gillett',
-    url: 'https://chrisgillett.org/information-asymmetry',
-    date_published: '9/2/22',
-    image_url: 'https://res.cloudinary.com/subframe/image/upload/v1723780655/uploads/302/vacffcy0kwezmeps1tbv.png'
-  },
-  {
-    id: '3',
-    title: 'On DeepSeek and Export Controls',
-    domain_name: 'darioamodei.com',
-    author: 'Dario Amodei',
-    url: 'https://darioamodei.com/deepseek',
-    date_published: '1/28/25',
-    image_url: 'https://res.cloudinary.com/subframe/image/upload/v1723780751/uploads/302/cbaa1tfstfnmksus95et.png'
-  },
-  {
-    id: '4',
-    title: '28 Millenia Later',
-    domain_name: 'qntm.org',
-    author: 'qntm',
-    url: 'https://qntm.org/millenia',
-    date_published: '11/13/20',
-    image_url: 'https://res.cloudinary.com/subframe/image/upload/v1723780624/uploads/302/sxocuez05safdpfaztiz.png'
-  },
-  {
-    id: '5',
-    title: 'The necessity of Nussbaum',
-    domain_name: 'Aeon',
-    author: 'Brandon Robshaw',
-    url: 'https://aeon.co/essays/the-necessity-of-nussbaum',
-    date_published: '3/7/25',
-    image_url: 'https://res.cloudinary.com/subframe/image/upload/v1723780871/uploads/302/h25wathcuwiid5ulpu1i.png'
-  },
-  {
-    id: '6',
-    title: 'Automating Reality',
-    domain_name: 'ZORA ZINE',
-    author: 'Matthew Donovan',
-    url: 'https://zora.co/zine/automating-reality',
-    date_published: '12/29/23',
-    image_url: 'https://res.cloudinary.com/subframe/image/upload/v1723780853/uploads/302/h3glkflohcjajdl3lah6.png'
-  },
-  {
-    id: '7',
-    title: 'Compute in America: Building the Next Gen..',
-    domain_name: 'IFP',
-    author: 'Tim Fist',
-    url: 'https://ifp.org/compute-in-america',
-    date_published: '6/10/24',
-    image_url: 'https://res.cloudinary.com/subframe/image/upload/v1723780696/uploads/302/hxk01sckxtlsjxi4n2dv.png'
-  }
-];
+import { getPublicBookshelves, Bookshelf } from "../services/bookshelfService";
+import { getAllEssays, Essay } from "../services/essayService";
 
 function BookshelfPage() {
   const [bookshelves, setBookshelves] = useState<Bookshelf[]>([]);
   const [essays, setEssays] = useState<Essay[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [bookshelvesLoading, setBookshelvesLoading] = useState(true);
+  const [essaysLoading, setEssaysLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
+  // Fetch bookshelves from Neo4j
   useEffect(() => {
-    // Simply use the mock data directly
-    setBookshelves(MOCK_BOOKSHELVES);
-    setEssays(MOCK_ESSAYS);
-    setLoading(false);
+    const fetchBookshelves = async () => {
+      try {
+        setBookshelvesLoading(true);
+        const data = await getPublicBookshelves();
+        setBookshelves(data);
+      } catch (error) {
+        console.error('Error fetching bookshelves:', error);
+      } finally {
+        setBookshelvesLoading(false);
+      }
+    };
+
+    fetchBookshelves();
   }, []);
+
+  // Fetch essays from Supabase
+  useEffect(() => {
+    const fetchEssays = async () => {
+      try {
+        setEssaysLoading(true);
+        const data = await getAllEssays();
+        setEssays(data);
+      } catch (error) {
+        console.error('Error fetching essays:', error);
+      } finally {
+        setEssaysLoading(false);
+      }
+    };
+
+    fetchEssays();
+  }, []);
+
+  // Filter essays based on search query
+  const filteredEssays = essays.filter(essay => 
+    searchQuery === "" || 
+    essay.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    essay.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    essay.domain_name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Paginate essays
+  const indexOfLastEssay = currentPage * itemsPerPage;
+  const indexOfFirstEssay = indexOfLastEssay - itemsPerPage;
+  const currentEssays = filteredEssays.slice(indexOfFirstEssay, indexOfLastEssay);
+  const totalPages = Math.ceil(filteredEssays.length / itemsPerPage);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   return (
     <DefaultPageLayout>
@@ -136,9 +79,13 @@ function BookshelfPage() {
             Explore our bookshelves
           </span>
           <div className="flex w-full flex-wrap items-start gap-4">
-            {loading ? (
-              <div className="flex items-center justify-center p-8">
+            {bookshelvesLoading ? (
+              <div className="flex items-center justify-center p-8 w-full">
                 <span>Loading bookshelves...</span>
+              </div>
+            ) : bookshelves.length === 0 ? (
+              <div className="flex items-center justify-center p-8 w-full">
+                <span>No bookshelves found.</span>
               </div>
             ) : (
               bookshelves.map((shelf, index) => (
@@ -194,17 +141,13 @@ function BookshelfPage() {
                 >
                   <DropdownMenu>
                     <DropdownMenu.DropdownItem icon={null}>
-                      Favorites
+                      All domains
                     </DropdownMenu.DropdownItem>
-                    <DropdownMenu.DropdownItem icon={null}>
-                      Top Gainers
-                    </DropdownMenu.DropdownItem>
-                    <DropdownMenu.DropdownItem icon={null}>
-                      Top Losers
-                    </DropdownMenu.DropdownItem>
-                    <DropdownMenu.DropdownItem icon={null}>
-                      Recently Updated
-                    </DropdownMenu.DropdownItem>
+                    {Array.from(new Set(essays.map(essay => essay.domain_name))).map(domain => (
+                      <DropdownMenu.DropdownItem key={domain} icon={null}>
+                        {domain}
+                      </DropdownMenu.DropdownItem>
+                    ))}
                   </DropdownMenu>
                 </SubframeCore.DropdownMenu.Content>
               </SubframeCore.DropdownMenu.Portal>
@@ -236,89 +179,104 @@ function BookshelfPage() {
                 </Table.HeaderRow>
               }
             >
-              {essays.map((essay) => (
-                <Table.Row key={essay.id}>
-                  <Table.Cell>
-                    <div className="flex items-center gap-2">
-                      <img
-                        className="h-6 w-6 flex-none rounded-md object-cover"
-                        src={essay.image_url}
-                        alt={essay.title}
-                      />
-                      <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
-                        {essay.title}
-                      </span>
+              {essaysLoading ? (
+                <Table.Row>
+                  <Table.Cell colSpan={4}>
+                    <div className="flex items-center justify-center p-4">
+                      <span>Loading essays...</span>
                     </div>
                   </Table.Cell>
-                  <Table.Cell>
-                    <span className="whitespace-nowrap text-caption-bold font-caption-bold text-success-700">
-                      {essay.domain_name}
-                    </span>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <span className="whitespace-nowrap text-caption-bold font-caption-bold text-default-font">
-                      {essay.author}
-                    </span>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <span className="whitespace-nowrap text-caption font-caption text-default-font">
-                      {essay.date_published}
-                    </span>
+                </Table.Row>
+              ) : currentEssays.length === 0 ? (
+                <Table.Row>
+                  <Table.Cell colSpan={4}>
+                    <div className="flex items-center justify-center p-4">
+                      <span>No essays found.</span>
+                    </div>
                   </Table.Cell>
                 </Table.Row>
-              ))}
+              ) : (
+                currentEssays.map((essay) => (
+                  <Table.Row key={essay.id}>
+                    <Table.Cell>
+                      <div className="flex items-center gap-2">
+                        <img
+                          className="h-6 w-6 flex-none rounded-md object-cover"
+                          src={essay.image_url}
+                          alt={essay.title}
+                        />
+                        <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
+                          {essay.title}
+                        </span>
+                      </div>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <span className="whitespace-nowrap text-caption-bold font-caption-bold text-success-700">
+                        {essay.domain_name}
+                      </span>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <span className="whitespace-nowrap text-caption-bold font-caption-bold text-default-font">
+                        {essay.author}
+                      </span>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <span className="whitespace-nowrap text-caption font-caption text-default-font">
+                        {essay.date_published}
+                      </span>
+                    </Table.Cell>
+                  </Table.Row>
+                ))
+              )}
             </Table>
             <div className="flex w-full items-center justify-center gap-1 px-4 py-4">
               <div className="flex items-center justify-center gap-1">
                 <IconButton
                   icon="FeatherChevronFirst"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+                  onClick={() => handlePageChange(1)}
+                  disabled={currentPage === 1}
                 />
                 <IconButton
                   icon="FeatherChevronLeft"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
                 />
               </div>
               <div className="flex items-center justify-center gap-1">
-                <Button
-                  variant="brand-secondary"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-                >
-                  1
-                </Button>
-                <Button
-                  variant="neutral-tertiary"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-                >
-                  2
-                </Button>
-                <Button
-                  variant="neutral-tertiary"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-                >
-                  3
-                </Button>
-                <Button
-                  variant="neutral-tertiary"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-                >
-                  4
-                </Button>
-                <Button
-                  variant="neutral-tertiary"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-                >
-                  5
-                </Button>
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  // Show pages around current page
+                  let pageNum = currentPage;
+                  if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+                  if (pageNum > 0 && pageNum <= totalPages) {
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={currentPage === pageNum ? "brand-secondary" : "neutral-tertiary"}
+                        onClick={() => handlePageChange(pageNum)}
+                      >
+                        {pageNum}
+                      </Button>
+                    );
+                  }
+                  return null;
+                })}
               </div>
               <div className="flex items-center justify-center gap-1">
                 <IconButton
                   icon="FeatherChevronRight"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
                 />
                 <IconButton
                   icon="FeatherChevronLast"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+                  onClick={() => handlePageChange(totalPages)}
+                  disabled={currentPage === totalPages}
                 />
               </div>
             </div>
