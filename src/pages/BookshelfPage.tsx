@@ -31,25 +31,26 @@ function BookshelfPage() {
   const fetchUrls = async (page: number) => {
     setLoading(true);
     try {
-      // Get total count of all entries
-      const countResponse = await supabase
-        .from('all_urls')
-        .select('*', { count: 'exact', head: true });
-
-      const totalCount = countResponse.count || 0;
+      // Hardcode the limit to first 1632 IDs
+      const maxId = 1632;
+      
+      // Calculate total pages based on fixed dataset size
+      const totalCount = maxId;
       const calculatedTotalPages = Math.ceil(totalCount / rowsPerPage);
       setTotalPages(calculatedTotalPages > 0 ? calculatedTotalPages : 1);
 
-      // Use simple query to get data - skipping the RPC function since it's not working
+      // Calculate offset based on current page
       const offset = (page - 1) * rowsPerPage;
       let essaysData = [];
 
-      // Direct query getting all essays without filtering for titles initially
+      // Fetch essays with IDs less than or equal to 1632
+      // and use order by random() for randomization
       const { data: essayResults, error: queryError } = await supabase
         .from('all_urls')
         .select('*')
-        .order('id', { ascending: false })  // Use simple ordering by ID for consistency
-        .limit(rowsPerPage);
+        .lte('id', maxId)  // Only include IDs up to 1632
+        .order('random()')  // Randomize the results
+        .range(offset, offset + rowsPerPage - 1);
 
       if (queryError) {
         console.error('Failed to fetch essays:', queryError);
