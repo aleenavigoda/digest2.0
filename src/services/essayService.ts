@@ -70,15 +70,36 @@ export async function getAllEssays(): Promise<Essay[]> {
 
     console.log('Attempting to fetch essays from Supabase...');
 
+    console.log('Supabase instance:', !!supabase);
+    
     // Try to fetch real data with error handling
     const { data, error } = await supabase
-      .from('all_urls')
+      .from('articles')  // Try 'articles' table instead of 'all_urls'
       .select('*')
       .limit(20); // Limit to 20 rows for faster response
 
     if (error) {
       console.error('Error fetching essays:', error);
-      return MOCK_ESSAYS; // Return mock data on error
+      console.log('Attempting to query a different table...');
+      
+      try {
+        // Try an alternative table name as fallback
+        const fallbackResponse = await supabase
+          .from('all_urls')
+          .select('*')
+          .limit(20);
+          
+        if (!fallbackResponse.error && fallbackResponse.data && fallbackResponse.data.length > 0) {
+          console.log('Successfully fetched from fallback table');
+          data = fallbackResponse.data;
+        } else {
+          console.error('Fallback table also failed:', fallbackResponse.error);
+          return MOCK_ESSAYS; // Return mock data when both attempts fail
+        }
+      } catch (fallbackError) {
+        console.error('Error in fallback query:', fallbackError);
+        return MOCK_ESSAYS;
+      }
     }
 
     if (!data || data.length === 0) {
