@@ -42,12 +42,14 @@ function BookshelfPage() {
       setTotalPages(calculatedTotalPages > 0 ? calculatedTotalPages : 1);
       
       // Use the server-side random function
-      const offset = (page - 1) * rowsPerPage;
       const { data, error } = await supabase
         .rpc('get_random_essays', { 
-          p_limit: rowsPerPage, 
-          p_offset: offset 
+          p_limit: rowsPerPage
         });
+        
+      // If you need pagination with the random function,
+      // you might need a different approach as random + offset
+      // will give different random sets each time
 
       if (error) {
         console.error('Error fetching URLs:', error);
