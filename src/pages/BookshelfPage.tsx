@@ -41,37 +41,41 @@ function BookshelfPage() {
       const calculatedTotalPages = Math.ceil(totalCount / rowsPerPage);
       setTotalPages(calculatedTotalPages > 0 ? calculatedTotalPages : 1);
 
-      // Use the server-side random function
+      // Use the server-side random function if available
       const offset = (page - 1) * rowsPerPage;
-      const { data, error } = await supabase
+      let essaysData = [];
+
+      // Try the RPC function first
+      const { data: rpcData, error: rpcError } = await supabase
         .rpc('get_random_essays', { 
           p_limit: rowsPerPage,
           p_offset: offset
         });
 
-      if (error) {
-        console.error('Error fetching URLs:', error);
-        console.log('Falling back to standard query with random ordering');
+      if (rpcError || !rpcData || rpcData.length === 0) {
+        console.error('Error with RPC function or no results returned:', rpcError);
+        console.log('Falling back to direct query with random ordering');
 
-        // Fallback to standard query with proper random ordering and filter for entries with titles
+        // Fallback to standard query with filter for entries with titles
         const { data: fallbackData, error: fallbackError } = await supabase
           .from('all_urls')
           .select('*')
           .not('title', 'is', null)  // Only get entries with titles
-          .order('random()') // Use random ordering directly in the query
-          .limit(rowsPerPage)
-          .range(offset, offset + rowsPerPage - 1);
+          .order('random()')  // Use random ordering directly in the query
+          .limit(rowsPerPage);
 
         if (fallbackError) {
-          console.error('Failed to fetch URLs:', fallbackError);
+          console.error('Failed with fallback query:', fallbackError);
         } else {
-          setUrlData(fallbackData || []);
+          essaysData = fallbackData || [];
         }
       } else {
-        // Filter out entries without titles if needed
-        const filteredData = data?.filter(item => item.title) || [];
-        setUrlData(filteredData);
+        // Filter out any null titles from RPC results
+        essaysData = rpcData.filter(item => item.title) || [];
       }
+
+      console.log(`Fetched ${essaysData.length} essays for page ${page}`);
+      setUrlData(essaysData);
     } catch (err) {
       console.error('Failed to fetch URLs:', err);
     } finally {
