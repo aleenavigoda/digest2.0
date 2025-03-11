@@ -123,9 +123,17 @@ function BookshelfPage() {
     <DefaultPageLayout>
       <div className="container max-w-none flex h-full w-full flex-col items-start gap-12 bg-default-background py-12">
         <div className="flex w-full flex-col items-start gap-6">
-          <span className="w-full text-heading-2 font-heading-2 text-default-font">
-            Explore our bookshelves
-          </span>
+          <div className="flex w-full items-center justify-between">
+            <span className="text-heading-2 font-heading-2 text-default-font">
+              Explore our bookshelves
+            </span>
+            <span className="text-caption font-caption text-subtext-color flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+              Scroll horizontally to see more
+            </span>
+          </div>
           <div className="w-full overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-neutral-border scrollbar-track-transparent">
             <div className="flex items-start gap-4 py-2" style={{ minWidth: 'max-content', paddingLeft: '4px', paddingRight: '4px' }}>
               {bookshelvesLoading ? (
