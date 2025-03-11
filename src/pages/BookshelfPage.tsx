@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -36,11 +35,11 @@ function BookshelfPage() {
       const countResponse = await supabase
         .from('all_urls')
         .select('*', { count: 'exact', head: true });
-      
+
       const totalCount = countResponse.count || 0;
       const calculatedTotalPages = Math.ceil(totalCount / rowsPerPage);
       setTotalPages(calculatedTotalPages > 0 ? calculatedTotalPages : 1);
-      
+
       // Use the server-side random function
       const offset = (page - 1) * rowsPerPage;
       const { data, error } = await supabase
@@ -51,18 +50,18 @@ function BookshelfPage() {
 
       if (error) {
         console.error('Error fetching URLs:', error);
-        console.log('Falling back to standard query with ordering');
-        
-        // Fallback to standard query if the RPC fails for any reason
+        console.log('Falling back to standard query with random ordering');
+
+        // Fallback to standard query with proper random ordering
         const { data: fallbackData, error: fallbackError } = await supabase
           .from('all_urls')
           .select('*')
-          .order('id')
+          .order('random()') // Use random ordering directly in the query
           .limit(rowsPerPage)
           .range(offset, offset + rowsPerPage - 1);
-          
+
         if (fallbackError) {
-          console.error('Fallback query error:', fallbackError);
+          console.error('Failed to fetch URLs:', fallbackError);
         } else {
           setUrlData(fallbackData || []);
         }
