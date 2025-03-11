@@ -126,15 +126,15 @@ function BookshelfPage() {
           <span className="w-full text-heading-2 font-heading-2 text-default-font">
             Explore our bookshelves
           </span>
-          <div className="w-full overflow-x-auto pb-4">
-            <div className="flex items-start gap-4" style={{ minWidth: 'min-content' }}>
+          <div className="w-full overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-neutral-border scrollbar-track-transparent">
+            <div className="flex items-start gap-4 py-2" style={{ minWidth: 'max-content', paddingLeft: '4px', paddingRight: '4px' }}>
               {bookshelvesLoading ? (
                 <div className="w-full text-center py-8">Loading bookshelves...</div>
               ) : bookshelves.length === 0 ? (
                 <div className="w-full text-center py-8">No bookshelves found. Run setup-neo4j script to add sample data.</div>
               ) : (
                 bookshelves.map((shelf, index) => (
-                  <div key={shelf.id} className="flex flex-col items-start gap-4 rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm" style={{ minWidth: '350px', maxWidth: '450px' }}>
+                  <div key={shelf.id} className="flex flex-col items-start gap-4 rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm hover:shadow-md transition-shadow" style={{ minWidth: '350px', width: '350px', flexShrink: 0 }}>
                     <div className="flex w-full items-center gap-4">
                       <Avatar
                         size="x-large"
