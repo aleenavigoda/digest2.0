@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -38,7 +37,7 @@ function BookshelfPage() {
     try {
       // Hardcode the limit to first 1632 IDs
       const maxId = 1632;
-      
+
       // Calculate total pages based on fixed dataset size
       const totalCount = maxId;
       const calculatedTotalPages = Math.ceil(totalCount / rowsPerPage);
@@ -66,7 +65,7 @@ function BookshelfPage() {
         }
       } catch (supabaseError) {
         console.error('Supabase query error:', supabaseError);
-        
+
         // Fallback: Use hardcoded sample data if the query fails
         essaysData = [
           { id: 1, title: "The Art of Programming", domain_name: "medium.com", author: "John Doe", date_published: "2023-05-15" },
@@ -81,7 +80,7 @@ function BookshelfPage() {
       setUrlData(essaysData);
     } catch (err) {
       console.error('Failed to fetch URLs:', err);
-      
+
       // Set sample data as fallback
       setUrlData([
         { id: 1, title: "The Art of Programming", domain_name: "medium.com", author: "John Doe", date_published: "2023-05-15" },
@@ -118,7 +117,7 @@ function BookshelfPage() {
       console.log("URL Data fetched:", urlData);
     }
   }, [urlData]);
-  
+
   return (
     <DefaultPageLayout>
       <div className="container max-w-none flex h-full w-full flex-col items-start gap-12 bg-default-background py-12">
@@ -179,7 +178,7 @@ function BookshelfPage() {
             </div>
           </div>
         </div>
-        
+
         <div className="flex w-full flex-col items-start gap-6">
           <span className="w-full text-heading-2 font-heading-2 text-default-font">
             Browse all essays
@@ -315,7 +314,7 @@ function BookshelfPage() {
                 {(() => {
                   const visiblePages = [];
                   const maxVisiblePages = 5;
-                  
+
                   // Always show first page
                   visiblePages.push(
                     <Button
@@ -326,18 +325,18 @@ function BookshelfPage() {
                       1
                     </Button>
                   );
-                  
+
                   // Add ellipsis after first page if needed
                   if (currentPage > 3) {
                     visiblePages.push(
                       <span key="ellipsis-start" className="px-2">...</span>
                     );
                   }
-                  
+
                   // Add pages around current page
                   const startPage = Math.max(2, currentPage - 1);
                   const endPage = Math.min(totalPages - 1, currentPage + 1);
-                  
+
                   for (let i = startPage; i <= endPage; i++) {
                     if (i > 1 && i < totalPages) {
                       visiblePages.push(
@@ -351,14 +350,14 @@ function BookshelfPage() {
                       );
                     }
                   }
-                  
+
                   // Add ellipsis before last page if needed
                   if (currentPage < totalPages - 2) {
                     visiblePages.push(
                       <span key="ellipsis-end" className="px-2">...</span>
                     );
                   }
-                  
+
                   // Always show last page if there's more than one page
                   if (totalPages > 1) {
                     visiblePages.push(
@@ -371,7 +370,7 @@ function BookshelfPage() {
                       </Button>
                     );
                   }
-                  
+
                   return visiblePages;
                 })()}
               </div>
