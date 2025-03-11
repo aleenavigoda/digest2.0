@@ -44,12 +44,11 @@ function BookshelfPage() {
       let essaysData = [];
 
       // Fetch essays with IDs less than or equal to 1632
-      // and use order by random() for randomization
       const { data: essayResults, error: queryError } = await supabase
         .from('all_urls')
         .select('*')
         .lte('id', maxId)  // Only include IDs up to 1632
-        .order('random()')  // Randomize the results
+        .not('title', 'is', null)  // Only return entries with titles
         .range(offset, offset + rowsPerPage - 1);
 
       if (queryError) {
