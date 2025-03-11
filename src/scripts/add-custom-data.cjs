@@ -1,23 +1,18 @@
 
-// CommonJS version of the script that can run with node
+require('dotenv').config();
 const neo4j = require('neo4j-driver');
-require('dotenv').config(); // Load environment variables properly
 
-// Get environment variables
-const neo4jUri = process.env.VITE_NEO4J_URI || '';
-const neo4jUser = process.env.VITE_NEO4J_USER || '';
-const neo4jPassword = process.env.VITE_NEO4J_PASSWORD || '';
+// Connect to Neo4j
+const uri = process.env.VITE_NEO4J_URI;
+const user = process.env.VITE_NEO4J_USER;
+const password = process.env.VITE_NEO4J_PASSWORD;
 
-console.log('Connecting to Neo4j database...');
-console.log('URI:', neo4jUri ? 'URI is set' : 'URI is missing');
-console.log('User:', neo4jUser ? 'User is set' : 'User is missing');
-console.log('Password:', neo4jPassword ? 'Password is set' : 'Password is missing');
+if (!uri || !user || !password) {
+  console.error('Missing Neo4j credentials in .env file');
+  process.exit(1);
+}
 
-// Create a driver instance
-const driver = neo4j.driver(
-  neo4jUri,
-  neo4j.auth.basic(neo4jUser, neo4jPassword)
-);
+const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
 
 // This script adds custom data to your Neo4j database
 async function addCustomData() {
@@ -27,12 +22,13 @@ async function addCustomData() {
     // Create a user
     console.log('Creating a custom user...');
     await session.run(`
-      CREATE (u:User {
-        id: 'user-custom-1',
-        name: 'Your Name',
-        email: 'your-email@example.com',
-        avatar_url: 'https://example.com/avatar.png'
+      MERGE (u:User {
+        id: 'user-custom-1'
       })
+      ON CREATE SET
+        u.name = 'Your Name',
+        u.email = 'your-email@example.com',
+        u.avatar_url = 'https://example.com/avatar.png'
       RETURN u
     `);
     
@@ -40,18 +36,19 @@ async function addCustomData() {
     console.log('Creating a custom bookshelf...');
     await session.run(`
       MATCH (u:User {id: 'user-custom-1'})
-      CREATE (b:Bookshelf {
-        id: 'shelf-custom-1',
-        name: 'My Favorite Essays',
-        description: 'A collection of my favorite essays from around the web',
-        is_public: true,
-        created_at: datetime()
+      MERGE (b:Bookshelf {
+        id: 'shelf-custom-1'
       })
-      CREATE (u)-[:OWNS]->(b)
+      ON CREATE SET
+        b.name = 'My Favorite Essays',
+        b.description = 'A collection of my favorite essays from around the web',
+        b.is_public = true,
+        b.created_at = datetime()
+      MERGE (u)-[:OWNS]->(b)
       RETURN b
     `);
     
-    // Add some essays
+    // Add some essays from the Bookshelf page
     const essays = [
       {
         id: 1,
@@ -67,6 +64,13 @@ async function addCustomData() {
         domain_name: "Aeon",
         author: "Ross Andersen",
         url: "https://aeon.co/essays/elon-musk-puts-his-case-for-a-multi-planet-civilisation"
+      },
+      {
+        id: 1632,
+        title: "The devotion of the human dad separates us from other apes",
+        domain_name: "Aeon",
+        author: "Anna Machin",
+        url: "https://aeon.co/essays/the-devotion-of-the-human-dad-separates-us-from-other-apes"
       }
     ];
     
@@ -82,7 +86,7 @@ async function addCustomData() {
           e.author = $author,
           e.url = $url,
           e.date_published = $datePublished
-        CREATE (b)-[:CONTAINS]->(e)
+        MERGE (b)-[:CONTAINS]->(e)
         RETURN e
       `, {
         id: essay.id.toString(),
@@ -93,18 +97,6 @@ async function addCustomData() {
         datePublished: essay.date_published || null
       });
     }
-    
-    // Create a friendship
-    console.log('Adding a friend relationship...');
-    await session.run(`
-      MATCH (u:User {id: 'user-custom-1'})
-      MERGE (friend:User {id: 'user-friend-1'})
-      ON CREATE SET 
-        friend.name = 'Friend Name',
-        friend.email = 'friend@example.com'
-      CREATE (u)-[:FRIENDS_WITH]->(friend)
-      RETURN friend
-    `);
     
     console.log('Custom data setup complete!');
   } catch (error) {
