@@ -219,14 +219,22 @@ function BookshelfPage() {
                   <Table.Row key={essay.id}>
                     <Table.Cell>
                       <div className="flex items-center gap-2">
-                        <img
-                          className="h-6 w-6 flex-none rounded-md object-cover"
-                          src={essay.image_url}
-                          alt={essay.title}
-                        />
-                        <span className="whitespace-nowrap text-body-bold font-body-bold text-default-font">
+                        <div 
+                          className="h-6 w-6 flex-none rounded-md flex items-center justify-center text-white"
+                          style={{
+                            backgroundColor: `hsl(${essay.title.charCodeAt(0) % 360}, 70%, 50%)`,
+                          }}
+                        >
+                          {essay.title.charAt(0).toUpperCase()}
+                        </div>
+                        <a 
+                          href={essay.url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="whitespace-nowrap text-body-bold font-body-bold text-default-font hover:text-brand-500 hover:underline"
+                        >
                           {essay.title}
-                        </span>
+                        </a>
                       </div>
                     </Table.Cell>
                     <Table.Cell>

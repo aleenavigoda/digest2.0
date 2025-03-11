@@ -93,7 +93,7 @@ export async function getAllEssays(): Promise<Essay[]> {
         author: item.author || 'Anonymous',
         url: item.url || '#',
         date_published: item.date_published || new Date().toISOString().split('T')[0],
-        image_url: item.image_url || `https://placehold.co/100x100?text=${encodeURIComponent((item.title?.charAt(0) || 'E').toUpperCase())}`
+        // Remove image_url field as we'll generate colors dynamically
       }));
 
       console.log('Successfully loaded essays from Supabase:', essays.length);
