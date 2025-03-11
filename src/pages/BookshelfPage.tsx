@@ -223,8 +223,8 @@ function BookshelfPage() {
                           className="h-6 w-6 flex-none rounded-md"
                           style={{
                             background: `linear-gradient(135deg, 
-                              hsl(${essay.title.charCodeAt(0) % 360}, 70%, 50%), 
-                              hsl(${(essay.title.charCodeAt(0) + 40) % 360}, 70%, 50%))`,
+                              hsl(${(essay.title.charCodeAt(0) * 7) % 360}, 80%, 65%), 
+                              hsl(${(essay.title.charCodeAt(0) * 7 + 120) % 360}, 70%, 55%))`,
                           }}
                         >
                         </div>
