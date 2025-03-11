@@ -13,8 +13,38 @@ export interface Bookshelf {
   name: string;
   description: string;
   is_public: boolean;
-  owner_id: string;
+  owner_id?: string;
   created_at: string;
+  image_url?: string;
+}
+
+// Get all public bookshelves
+export async function getPublicBookshelves(): Promise<Bookshelf[]> {
+  const session = createSession();
+  try {
+    const result = await session.run(
+      `
+      MATCH (b:Bookshelf)
+      WHERE b.is_public = true
+      RETURN b
+      `
+    );
+    
+    return result.records.map(record => {
+      const bookshelf = record.get('b').properties;
+      // Convert Neo4j types to JavaScript types
+      return {
+        ...bookshelf,
+        is_public: Boolean(bookshelf.is_public),
+        created_at: bookshelf.created_at ? bookshelf.created_at.toString() : new Date().toISOString()
+      };
+    });
+  } catch (error) {
+    console.error("Error fetching public bookshelves:", error);
+    return [];
+  } finally {
+    await session.close();
+  }
 }
 
 export interface Essay {
