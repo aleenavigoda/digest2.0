@@ -36,13 +36,17 @@ function BookshelfPage() {
     fetchBookshelves();
   }, []);
 
-  // Fetch essays from Supabase
+  // Fetch essays from Supabase (or mock data if Supabase fails)
   useEffect(() => {
     const fetchEssays = async () => {
       try {
         setEssaysLoading(true);
         const data = await getAllEssays();
-        setEssays(data);
+        if (data && data.length > 0) {
+          setEssays(data);
+        } else {
+          console.error('No essays data returned');
+        }
       } catch (error) {
         console.error('Error fetching essays:', error);
       } finally {
