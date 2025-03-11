@@ -78,6 +78,13 @@ function BookshelfPage() {
   useEffect(() => {
     fetchUrls(currentPage);
   }, [currentPage]);
+
+  // Log the data for debugging
+  useEffect(() => {
+    if (urlData.length > 0) {
+      console.log("URL Data fetched:", urlData);
+    }
+  }, [urlData]);
   return (
     <DefaultPageLayout>
       <div className="container max-w-none flex h-full w-full flex-col items-start gap-12 bg-default-background py-12">
