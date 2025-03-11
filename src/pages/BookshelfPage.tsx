@@ -10,6 +10,7 @@ import { TextField } from "../ui/components/TextField";
 import { Table } from "../ui/components/Table";
 import { IconButton } from "../ui/components/IconButton";
 import { supabase } from "../lib/supabase";
+import { getPublicBookshelves, Bookshelf } from "../services/socialGraphService";
 
 // Define the type for our URL data
 interface UrlData {
@@ -19,6 +20,7 @@ interface UrlData {
   author: string;
   date_published: string;
   image_url?: string;
+  url?: string;
 }
 
 function BookshelfPage() {
@@ -26,6 +28,8 @@ function BookshelfPage() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [bookshelves, setBookshelves] = useState<Bookshelf[]>([]);
+  const [bookshelvesLoading, setBookshelvesLoading] = useState(true);
   const rowsPerPage = 7;
 
   const fetchUrls = async (page: number) => {
@@ -67,8 +71,24 @@ function BookshelfPage() {
     }
   };
 
+  // Fetch bookshelves from Neo4j
+  const fetchBookshelves = async () => {
+    setBookshelvesLoading(true);
+    try {
+      const shelves = await getPublicBookshelves();
+      console.log("Bookshelves fetched:", shelves);
+      setBookshelves(shelves || []);
+    } catch (error) {
+      console.error("Failed to fetch bookshelves:", error);
+      setBookshelves([]);
+    } finally {
+      setBookshelvesLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchUrls(currentPage);
+    fetchBookshelves();
   }, [currentPage]);
 
   // Log the data for debugging
@@ -85,54 +105,37 @@ function BookshelfPage() {
             Explore our bookshelves
           </span>
           <div className="flex w-full flex-wrap items-start gap-4">
-            <div className="flex grow shrink-0 basis-0 flex-col items-start gap-4 self-stretch rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm">
-              <div className="flex w-full items-center gap-4">
-                <Avatar
-                  size="x-large"
-                  image="https://res.cloudinary.com/subframe/image/upload/v1723780835/uploads/302/kr9usrdgbwp9cge3ab1f.png"
-                >
-                  A
-                </Avatar>
-                <div className="flex grow shrink-0 basis-0 flex-col items-start gap-1">
-                  <span className="text-caption-bold font-caption-bold text-brand-700">
-                    DIGEST
-                  </span>
-                  <span className="text-heading-3 font-heading-3 text-default-font">
-                    Writing on Writing
-                  </span>
+            {bookshelvesLoading ? (
+              <div className="w-full text-center py-8">Loading bookshelves...</div>
+            ) : bookshelves.length === 0 ? (
+              <div className="w-full text-center py-8">No bookshelves found. Run setup-neo4j script to add sample data.</div>
+            ) : (
+              bookshelves.map((shelf, index) => (
+                <div key={shelf.id} className="flex grow shrink-0 basis-0 flex-col items-start gap-4 self-stretch rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm">
+                  <div className="flex w-full items-center gap-4">
+                    <Avatar
+                      size="x-large"
+                      image={shelf.image_url || "https://res.cloudinary.com/subframe/image/upload/v1723780835/uploads/302/kr9usrdgbwp9cge3ab1f.png"}
+                    >
+                      {shelf.name.charAt(0)}
+                    </Avatar>
+                    <div className="flex grow shrink-0 basis-0 flex-col items-start gap-1">
+                      <span className="text-caption-bold font-caption-bold text-brand-700">
+                        {index === 0 ? "DIGEST" : "RADAR"}
+                      </span>
+                      <span className="text-heading-3 font-heading-3 text-default-font">
+                        {shelf.name}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-start gap-4">
+                    <span className="text-body font-body text-subtext-color">
+                      {shelf.description}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-col items-start gap-4">
-                <span className="text-body font-body text-subtext-color">
-                  The best essays from the best essayists on improving your
-                  craft, finding your audience, and owning your voice.
-                </span>
-              </div>
-            </div>
-            <div className="flex grow shrink-0 basis-0 flex-col items-start gap-4 self-stretch rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm">
-              <div className="flex w-full items-center gap-4">
-                <Avatar
-                  size="x-large"
-                  image="https://res.cloudinary.com/subframe/image/upload/v1723780859/uploads/302/hh4s5xjmsigiehqkb1uh.png"
-                >
-                  A
-                </Avatar>
-                <div className="flex grow shrink-0 basis-0 flex-col items-start gap-1">
-                  <span className="text-caption-bold font-caption-bold text-brand-700">
-                    RADAR
-                  </span>
-                  <span className="text-heading-3 font-heading-3 text-default-font">
-                    Climate &amp; Care
-                  </span>
-                </div>
-              </div>
-              <div className="flex flex-col items-start gap-4">
-                <span className="text-body font-body text-subtext-color">
-                  How can we re-write ecologies of care through the lens of
-                  indigenous heritage and the earth&#39;s natural primitives?
-                </span>
-              </div>
-            </div>
+              ))
+            )}
           </div>
         </div>
         <div className="flex w-full flex-col items-start gap-6">

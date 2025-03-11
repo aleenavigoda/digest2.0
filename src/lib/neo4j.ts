@@ -25,3 +25,17 @@ process.on('SIGTERM', closeDriver);
 process.on('SIGINT', closeDriver);
 
 export default driver;
+import neo4j from 'neo4j-driver';
+
+const neo4jUri = import.meta.env.VITE_NEO4J_URI || '';
+const neo4jUser = import.meta.env.VITE_NEO4J_USER || '';
+const neo4jPassword = import.meta.env.VITE_NEO4J_PASSWORD || '';
+
+const driver = neo4j.driver(
+  neo4jUri,
+  neo4j.auth.basic(neo4jUser, neo4jPassword)
+);
+
+export const createSession = () => driver.session();
+
+export default driver;
