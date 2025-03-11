@@ -222,7 +222,9 @@ function BookshelfPage() {
                         <div 
                           className="h-6 w-6 flex-none rounded-md flex items-center justify-center text-white"
                           style={{
-                            backgroundColor: `hsl(${essay.title.charCodeAt(0) % 360}, 70%, 50%)`,
+                            background: `linear-gradient(135deg, 
+                              hsl(${essay.title.charCodeAt(0) % 360}, 70%, 50%), 
+                              hsl(${(essay.title.charCodeAt(0) + 40) % 360}, 70%, 50%))`,
                           }}
                         >
                           {essay.title.charAt(0).toUpperCase()}
