@@ -13,6 +13,34 @@ interface Bookshelf {
   created_at: string;
 }
 
+// Mock data to display while fixing Supabase connection
+const MOCK_BOOKSHELVES: Bookshelf[] = [
+  {
+    id: 'shelf-writing',
+    name: 'Writing & Craft',
+    description: 'Essays about the art and craft of writing, from structure to style to process.',
+    image_url: 'https://res.cloudinary.com/subframe/image/upload/v1723780835/uploads/302/kr9usrdgbwp9cge3ab1f.png',
+    is_public: true,
+    created_at: '2023-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'shelf-climate',
+    name: 'Climate & Care',
+    description: 'How can we re-write ecologies of care through the lens of indigenous heritage and the earth\'s natural primitives?',
+    image_url: 'https://res.cloudinary.com/subframe/image/upload/v1723780859/uploads/302/hh4s5xjmsigiehqkb1uh.png',
+    is_public: true,
+    created_at: '2023-01-02T00:00:00.000Z'
+  },
+  {
+    id: 'shelf-tech',
+    name: 'Tech & Society',
+    description: 'Exploring the intersection of technology and human society. How tech shapes our lives and future.',
+    image_url: null,
+    is_public: true,
+    created_at: '2023-01-03T00:00:00.000Z'
+  }
+];
+
 export default function BookshelfPage() {
   const [bookshelves, setBookshelves] = useState<Bookshelf[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,25 +53,37 @@ export default function BookshelfPage() {
         
         if (!supabaseUrl || !supabaseKey) {
           console.error("Supabase URL or key is missing");
+          // Use mock data when Supabase credentials are missing
+          setBookshelves(MOCK_BOOKSHELVES);
           setLoading(false);
           return;
         }
         
         const supabase = createClient(supabaseUrl, supabaseKey);
         
-        const { data, error } = await supabase
-          .from("bookshelves")
-          .select("*")
-          .order("created_at", { ascending: false });
-        
-        if (error) {
-          console.error("Error fetching bookshelves:", error);
-        } else {
-          console.log("Bookshelves fetched:", data);
-          setBookshelves(data || []);
+        try {
+          const { data, error } = await supabase
+            .from("bookshelves")
+            .select("*")
+            .order("created_at", { ascending: false });
+          
+          if (error) {
+            console.error("Error fetching bookshelves:", error);
+            // Use mock data when Supabase query fails
+            setBookshelves(MOCK_BOOKSHELVES);
+          } else {
+            console.log("Bookshelves fetched:", data);
+            setBookshelves(data && data.length > 0 ? data : MOCK_BOOKSHELVES);
+          }
+        } catch (fetchError) {
+          console.error("Failed to fetch from Supabase:", fetchError);
+          // Use mock data when fetch fails
+          setBookshelves(MOCK_BOOKSHELVES);
         }
       } catch (error) {
         console.error("Failed to fetch bookshelves:", error);
+        // Use mock data on any other error
+        setBookshelves(MOCK_BOOKSHELVES);
       } finally {
         setLoading(false);
       }
