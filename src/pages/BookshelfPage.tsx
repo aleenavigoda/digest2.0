@@ -47,6 +47,8 @@ function BookshelfPage() {
           setEssays(data);
         } else {
           console.warn('No essays data returned, using mock data');
+          // If we get here, we're likely using mock data
+          setEssays(data); // Still set the data (which is likely MOCK_ESSAYS)
         }
       } catch (error) {
         console.error('Error fetching essays:', error);

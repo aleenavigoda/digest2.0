@@ -1,20 +1,25 @@
 
 import { createClient } from '@supabase/supabase-js';
 
+// Get environment variables
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Ensure we have the required values
-if (!supabaseUrl || !supabaseKey) {
-  console.error('Missing Supabase environment variables. Check your .env file.');
-}
+// Log for debugging
+console.log('Supabase URL available:', !!supabaseUrl);
+console.log('Supabase Key available:', !!supabaseKey);
 
-export const supabase = createClient(
-  supabaseUrl || '',
-  supabaseKey || '',
-  {
-    auth: {
-      persistSession: false
-    }
-  }
-);
+// Create Supabase client with proper error handling
+export const supabase = (supabaseUrl && supabaseKey) 
+  ? createClient(supabaseUrl, supabaseKey, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: true
+      }
+    })
+  : null;
+
+// Check if client is initialized
+if (!supabase) {
+  console.error('Supabase client not initialized. Check your environment variables.');
+}
