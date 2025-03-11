@@ -31,10 +31,11 @@ function BookshelfPage() {
   const fetchUrls = async (page: number) => {
     setLoading(true);
     try {
-      // Get total count first
+      // Get total count of entries with titles
       const countResponse = await supabase
         .from('all_urls')
-        .select('*', { count: 'exact', head: true });
+        .select('*', { count: 'exact', head: true })
+        .not('title', 'is', null);
 
       const totalCount = countResponse.count || 0;
       const calculatedTotalPages = Math.ceil(totalCount / rowsPerPage);
@@ -52,10 +53,11 @@ function BookshelfPage() {
         console.error('Error fetching URLs:', error);
         console.log('Falling back to standard query with random ordering');
 
-        // Fallback to standard query with proper random ordering
+        // Fallback to standard query with proper random ordering and filter for entries with titles
         const { data: fallbackData, error: fallbackError } = await supabase
           .from('all_urls')
           .select('*')
+          .not('title', 'is', null)  // Only get entries with titles
           .order('random()') // Use random ordering directly in the query
           .limit(rowsPerPage)
           .range(offset, offset + rowsPerPage - 1);
@@ -66,7 +68,9 @@ function BookshelfPage() {
           setUrlData(fallbackData || []);
         }
       } else {
-        setUrlData(data || []);
+        // Filter out entries without titles if needed
+        const filteredData = data?.filter(item => item.title) || [];
+        setUrlData(filteredData);
       }
     } catch (err) {
       console.error('Failed to fetch URLs:', err);
