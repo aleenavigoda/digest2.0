@@ -41,26 +41,30 @@ function BookshelfPage() {
       const calculatedTotalPages = Math.ceil(totalCount / rowsPerPage);
       setTotalPages(calculatedTotalPages > 0 ? calculatedTotalPages : 1);
       
-      // Then get paginated data
-      // For random order, we need to use the correct Supabase syntax
+      // Use the server-side random function
+      const offset = (page - 1) * rowsPerPage;
       const { data, error } = await supabase
-        .from('all_urls')
-        .select('*')
-        .order('id', { ascending: false, foreignTable: null }) // This line is just for consistency
-        .limit(rowsPerPage)
-        .range((page - 1) * rowsPerPage, page * rowsPerPage - 1);
-        
-      // After fetching, we'll shuffle the array on the client side
-      if (data && data.length > 0) {
-        // Fisher-Yates shuffle algorithm
-        for (let i = data.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [data[i], data[j]] = [data[j], data[i]];
-        }
-      }
+        .rpc('get_random_essays', { 
+          p_limit: rowsPerPage, 
+          p_offset: offset 
+        });
 
       if (error) {
         console.error('Error fetching URLs:', error);
+        
+        // Fallback to standard query if the RPC fails for any reason
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from('all_urls')
+          .select('*')
+          .order('id')
+          .limit(rowsPerPage)
+          .range(offset, offset + rowsPerPage - 1);
+          
+        if (fallbackError) {
+          console.error('Fallback query error:', fallbackError);
+        } else {
+          setUrlData(fallbackData || []);
+        }
       } else {
         setUrlData(data || []);
       }
