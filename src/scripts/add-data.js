@@ -1,7 +1,12 @@
 
-// CommonJS version of the script that can run with node
-const neo4j = require('neo4j-driver');
-require('dotenv').config(); // Load environment variables properly
+// Pure JavaScript file that will work without TypeScript
+import neo4j from 'neo4j-driver';
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+// Load environment variables
+dotenv.config();
 
 // Get environment variables
 const neo4jUri = process.env.VITE_NEO4J_URI || '';
@@ -10,8 +15,6 @@ const neo4jPassword = process.env.VITE_NEO4J_PASSWORD || '';
 
 console.log('Connecting to Neo4j database...');
 console.log('URI:', neo4jUri ? 'URI is set' : 'URI is missing');
-console.log('User:', neo4jUser ? 'User is set' : 'User is missing');
-console.log('Password:', neo4jPassword ? 'Password is set' : 'Password is missing');
 
 // Create a driver instance
 const driver = neo4j.driver(
@@ -51,7 +54,7 @@ async function addCustomData() {
       RETURN b
     `);
     
-    // Add some essays
+    // Add some essays from the Bookshelf page
     const essays = [
       {
         id: 1,
@@ -67,6 +70,13 @@ async function addCustomData() {
         domain_name: "Aeon",
         author: "Ross Andersen",
         url: "https://aeon.co/essays/elon-musk-puts-his-case-for-a-multi-planet-civilisation"
+      },
+      {
+        id: 1632,
+        title: "The devotion of the human dad separates us from other apes",
+        domain_name: "Aeon",
+        author: "Anna Machin",
+        url: "https://aeon.co/essays/the-devotion-of-the-human-dad-separates-us-from-other-apes"
       }
     ];
     
@@ -93,18 +103,6 @@ async function addCustomData() {
         datePublished: essay.date_published || null
       });
     }
-    
-    // Create a friendship
-    console.log('Adding a friend relationship...');
-    await session.run(`
-      MATCH (u:User {id: 'user-custom-1'})
-      MERGE (friend:User {id: 'user-friend-1'})
-      ON CREATE SET 
-        friend.name = 'Friend Name',
-        friend.email = 'friend@example.com'
-      CREATE (u)-[:FRIENDS_WITH]->(friend)
-      RETURN friend
-    `);
     
     console.log('Custom data setup complete!');
   } catch (error) {
