@@ -42,11 +42,22 @@ function BookshelfPage() {
       setTotalPages(calculatedTotalPages > 0 ? calculatedTotalPages : 1);
       
       // Then get paginated data
+      // For random order, we need to use the correct Supabase syntax
       const { data, error } = await supabase
         .from('all_urls')
         .select('*')
-        .order('id', { ascending: false }) // Fallback to ordering by id since RANDOM() isn't working
+        .order('id', { ascending: false, foreignTable: null }) // This line is just for consistency
+        .limit(rowsPerPage)
         .range((page - 1) * rowsPerPage, page * rowsPerPage - 1);
+        
+      // After fetching, we'll shuffle the array on the client side
+      if (data && data.length > 0) {
+        // Fisher-Yates shuffle algorithm
+        for (let i = data.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [data[i], data[j]] = [data[j], data[i]];
+        }
+      }
 
       if (error) {
         console.error('Error fetching URLs:', error);
