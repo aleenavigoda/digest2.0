@@ -7,6 +7,7 @@ export interface Essay {
   author: string;
   url: string;
   date_published: string;
+  description?: string;
   image_url?: string;
 }
 
@@ -59,7 +60,7 @@ export const MOCK_ESSAYS: Essay[] = [
   }
 ];
 
-export async function getAllEssays(domain?: string): Promise<Essay[]> {
+export async function getAllEssays(domain?: string, searchQuery?: string): Promise<Essay[]> {
   try {
     // Check if supabase client is properly initialized
     if (!supabase) {
@@ -80,6 +81,12 @@ export async function getAllEssays(domain?: string): Promise<Essay[]> {
     if (domain && domain !== "All domains") {
       console.log(`Filtering essays by domain: ${domain}`);
       query = query.eq('domain_name', domain);
+    }
+    
+    // Apply search query filter if provided
+    if (searchQuery && searchQuery.trim() !== '') {
+      console.log(`Searching essays with query: ${searchQuery}`);
+      query = query.or(`title.ilike.%${searchQuery}%,author.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
     }
     
     // Limit the results

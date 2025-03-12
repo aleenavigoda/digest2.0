@@ -18,6 +18,7 @@ function BookshelfPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDomain, setSelectedDomain] = useState<string>("All domains");
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
   const itemsPerPage = 10;
 
   // Fetch bookshelves from Neo4j
@@ -44,8 +45,8 @@ function BookshelfPage() {
         setEssaysLoading(true);
         console.log('Fetching essays data from Supabase...');
         
-        // Try to get real data with domain filter
-        const data = await getAllEssays(selectedDomain);
+        // Try to get real data with domain filter and search query
+        const data = await getAllEssays(selectedDomain, searchQuery);
         console.log('Essay data received:', data ? data.length : 0, 'items');
         
         if (data && data.length > 0) {
@@ -71,17 +72,10 @@ function BookshelfPage() {
     };
 
     fetchEssays();
-  }, [selectedDomain]);
+  }, [selectedDomain, searchQuery]);
 
-  // Filter essays based on search query only
-  // The domain filtering is now handled by the backend
-  const filteredEssays = essays.filter(essay => {
-    // Check search query
-    return searchQuery === "" || 
-      essay.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      essay.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      essay.domain_name.toLowerCase().includes(searchQuery.toLowerCase());
-  });
+  // No need for client-side filtering as search is now handled by Supabase
+  const filteredEssays = essays;
 
   // Paginate essays - optimized for larger dataset
   const indexOfLastEssay = currentPage * itemsPerPage;
@@ -223,7 +217,22 @@ function BookshelfPage() {
                 className="w-full"
                 placeholder="What do you want to read?"
                 value={searchQuery}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(event.target.value)}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = event.target.value;
+                  setSearchQuery(value);
+                  
+                  // Debounce search to avoid too many API calls
+                  if (searchTimeout) {
+                    clearTimeout(searchTimeout);
+                  }
+                  
+                  // Only search after user stops typing for 300ms
+                  const timeout = setTimeout(() => {
+                    setSearchQuery(value);
+                  }, 300);
+                  
+                  setSearchTimeout(timeout);
+                }}
               />
             </TextField>
           </div>
