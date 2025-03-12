@@ -10,25 +10,35 @@ import { DefaultPageLayout } from "@/ui/layouts/DefaultPageLayout";
 import { getBookshelfEssays } from "@/services/socialGraphService";
 export default function LibraryPage() {
   const [searchParams] = useSearchParams();
-  const bookshelfId = searchParams.get("id");
+  const bookshelfId = searchParams.get("id") || "default-bookshelf"; // Provide a default ID
   const [essays, setEssays] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [bookshelfInfo, setBookshelfInfo] = useState({
+    name: "Climate & Care",
+    description: "How can we re-write ecologies of care through the lens of indigenous heritage and the earth's natural primitives?",
+    essayCount: 35,
+    contributorCount: 1,
+    imageUrl: "https://res.cloudinary.com/subframe/image/upload/v1723780559/uploads/302/tkyvdicnwbc5ftuyysc0.png"
+  });
+  
+  console.log("LibraryPage rendered with bookshelfId:", bookshelfId);
   
   useEffect(() => {
     async function fetchBookshelfData() {
-      if (bookshelfId) {
-        try {
-          console.log("Fetching essays for bookshelf ID:", bookshelfId);
-          const bookshelfEssays = await getBookshelfEssays(bookshelfId);
-          console.log("Essays loaded:", bookshelfEssays);
+      try {
+        console.log("Fetching essays for bookshelf ID:", bookshelfId);
+        const bookshelfEssays = await getBookshelfEssays(bookshelfId);
+        console.log("Essays loaded:", bookshelfEssays?.length || 0, "essays");
+        if (bookshelfEssays && Array.isArray(bookshelfEssays)) {
           setEssays(bookshelfEssays);
-        } catch (error) {
-          console.error("Error fetching bookshelf essays:", error);
-        } finally {
-          setLoading(false);
+        } else {
+          console.error("Invalid essays data received:", bookshelfEssays);
+          setEssays([]);
         }
-      } else {
-        console.log("No bookshelf ID provided");
+      } catch (error) {
+        console.error("Error fetching bookshelf essays:", error);
+        setEssays([]);
+      } finally {
         setLoading(false);
       }
     }
