@@ -16,6 +16,7 @@ function BookshelfPage() {
   const [bookshelvesLoading, setBookshelvesLoading] = useState(true);
   const [essaysLoading, setEssaysLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDomain, setSelectedDomain] = useState<string>("All domains");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -72,13 +73,19 @@ function BookshelfPage() {
     fetchEssays();
   }, []);
 
-  // Filter essays based on search query
-  const filteredEssays = essays.filter(essay => 
-    searchQuery === "" || 
-    essay.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    essay.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    essay.domain_name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Filter essays based on search query and selected domain
+  const filteredEssays = essays.filter(essay => {
+    // First check domain filter
+    const domainMatch = selectedDomain === "All domains" || essay.domain_name === selectedDomain;
+    
+    // Then check search query
+    const searchMatch = searchQuery === "" || 
+      essay.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      essay.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      essay.domain_name.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return domainMatch && searchMatch;
+  });
 
   // Paginate essays - optimized for larger dataset
   const indexOfLastEssay = currentPage * itemsPerPage;
@@ -171,7 +178,7 @@ function BookshelfPage() {
                   iconRight="FeatherChevronDown"
                   onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
                 >
-                  All domains
+                  {selectedDomain}
                 </Button>
               </SubframeCore.DropdownMenu.Trigger>
               <SubframeCore.DropdownMenu.Portal>
@@ -182,14 +189,30 @@ function BookshelfPage() {
                   asChild={true}
                 >
                   <DropdownMenu>
-                    <DropdownMenu.DropdownItem icon={null}>
+                    <DropdownMenu.DropdownItem 
+                      icon={null} 
+                      onClick={() => {
+                        setSelectedDomain("All domains");
+                        setCurrentPage(1); // Reset to first page when filter changes
+                      }}
+                    >
                       All domains
                     </DropdownMenu.DropdownItem>
-                    {Array.from(new Set(essays.map(essay => essay.domain_name))).map(domain => (
-                      <DropdownMenu.DropdownItem key={domain} icon={null}>
-                        {domain}
-                      </DropdownMenu.DropdownItem>
-                    ))}
+                    {Array.from(new Set(essays.map(essay => essay.domain_name)))
+                      .sort() // Sort domains alphabetically
+                      .map(domain => (
+                        <DropdownMenu.DropdownItem 
+                          key={domain} 
+                          icon={null}
+                          onClick={() => {
+                            setSelectedDomain(domain);
+                            setCurrentPage(1); // Reset to first page when filter changes
+                          }}
+                        >
+                          {domain}
+                        </DropdownMenu.DropdownItem>
+                      ))
+                    }
                   </DropdownMenu>
                 </SubframeCore.DropdownMenu.Content>
               </SubframeCore.DropdownMenu.Portal>
