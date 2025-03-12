@@ -23,13 +23,39 @@ function BookshelfPage() {
   );
   const itemsPerPage = 10;
 
+  // Color palettes for distinct bookshelf gradients
+  const colorPalettes = [
+    ['#FF5F6D', '#FFC371'], // Warm sunset
+    ['#2193b0', '#6dd5ed'], // Cool blue
+    ['#834d9b', '#d04ed6'], // Purple fusion
+    ['#4e54c8', '#8f94fb'], // Mystic blues
+    ['#11998e', '#38ef7d'], // Green meadow
+    ['#FC466B', '#3F5EFB'], // Pink to blue
+    ['#00F260', '#0575E6'], // Green to blue
+    ['#e1eec3', '#f05053'], // Soft green to red
+    ['#8A2387', '#F27121'], // Purple to orange
+    ['#1A2980', '#26D0CE'], // Dark blue to teal
+  ];
+
+  // Shuffle function for arrays
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+  };
+
   // Fetch bookshelves from Neo4j
   useEffect(() => {
     const fetchBookshelves = async () => {
       try {
         setBookshelvesLoading(true);
         const data = await getPublicBookshelves();
-        setBookshelves(data);
+        // Randomize the order of bookshelves
+        const shuffledBookshelves = shuffleArray(data);
+        setBookshelves(shuffledBookshelves);
       } catch (error) {
         console.error("Error fetching bookshelves:", error);
       } finally {
@@ -143,8 +169,8 @@ function BookshelfPage() {
                           image={shelf.image_url || ""}
                           style={{
                             background: `linear-gradient(135deg, 
-                              hsl(${(index * 137) % 360}, 80%, 65%), 
-                              hsl(${((index * 137) + 40) % 360}, 70%, 50%))`,
+                              ${colorPalettes[index % colorPalettes.length][0]}, 
+                              ${colorPalettes[index % colorPalettes.length][1]})`,
                           }}
                         >
                           {shelf.name.charAt(0)}
@@ -285,8 +311,8 @@ function BookshelfPage() {
                           className="h-6 w-6 flex-none rounded-md"
                           style={{
                             background: `linear-gradient(135deg, 
-                              hsl(${(essay.title.charCodeAt(0) * 7) % 360}, 80%, 65%), 
-                              hsl(${(essay.title.charCodeAt(0) * 7 + 120) % 360}, 70%, 55%))`,
+                              ${colorPalettes[essay.title.charCodeAt(0) % colorPalettes.length][0]}, 
+                              ${colorPalettes[essay.title.charCodeAt(0) % colorPalettes.length][1]})`,
                           }}
                         ></div>
                         <a
