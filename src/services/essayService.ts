@@ -85,9 +85,11 @@ export async function getAllEssays(domain?: string, searchQuery?: string): Promi
     
     // Apply search query filter if provided
     if (searchQuery && searchQuery.trim() !== '') {
-      console.log(`Searching essays with query: ${searchQuery}`);
-      query = query.or(`title.ilike.%${searchQuery}%`)
-                  .or(`author.ilike.%${searchQuery}%`);
+      const trimmedQuery = searchQuery.trim();
+      console.log(`Searching essays with query: ${trimmedQuery}`);
+      // Using ilike for case-insensitive search with wildcards on both sides
+      query = query.or(`title.ilike.%${trimmedQuery}%`)
+                  .or(`author.ilike.%${trimmedQuery}%`);
     }
     
     // Limit the results
@@ -118,6 +120,17 @@ export async function getAllEssays(domain?: string, searchQuery?: string): Promi
 
       console.log('Successfully loaded essays from Supabase:', essays.length);
 
+      // Log some essays that should contain the search term (if searching)
+      if (searchQuery && searchQuery.trim() !== '') {
+        const searchTerm = searchQuery.trim().toLowerCase();
+        const matchingEssays = essays.filter(essay => 
+          essay.title.toLowerCase().includes(searchTerm));
+        console.log(`Found ${matchingEssays.length} essays with '${searchTerm}' in the title`);
+        if (matchingEssays.length > 0) {
+          console.log('First few matching essays:', matchingEssays.slice(0, 3));
+        }
+      }
+      
       // Return real data
       return essays;
     }
