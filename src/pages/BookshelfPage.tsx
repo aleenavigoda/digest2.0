@@ -97,28 +97,15 @@ function BookshelfPage() {
     <DefaultPageLayout>
       <div className="container max-w-none flex h-full w-full flex-col items-start gap-12 bg-default-background py-12">
         <div className="flex w-full flex-col items-start gap-6">
-          <div className="flex w-full items-center justify-between">
-            <span className="text-heading-2 font-heading-2 text-default-font">
-              Explore our bookshelves
-            </span>
-            <button 
-              className="text-2xl text-brand-500 hover:text-brand-700 flex items-center justify-center w-8 h-8"
-              onClick={() => {
-                const container = document.getElementById('bookshelves-container');
-                if (container) {
-                  container.scrollBy({ left: 300, behavior: 'smooth' });
-                }
-              }}
-              aria-label="Scroll right"
+          <span className="text-heading-2 font-heading-2 text-default-font">
+            Explore our bookshelves
+          </span>
+          <div className="relative w-full">
+            <div 
+              id="bookshelves-container"
+              className="flex w-full items-start gap-4 overflow-x-auto pb-2 hide-scrollbar"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
-              &gt;
-            </button>
-          </div>
-          <div 
-            id="bookshelves-container"
-            className="flex w-full items-start gap-4 overflow-x-auto pb-2 hide-scrollbar"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
             {bookshelvesLoading ? (
               <div className="flex items-center justify-center p-8 w-full">
                 <span>Loading bookshelves...</span>
@@ -128,7 +115,20 @@ function BookshelfPage() {
                 <span>No bookshelves found.</span>
               </div>
             ) : (
-              bookshelves.map((shelf, index) => (
+              <>
+                <button 
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 text-2xl text-brand-500 hover:text-brand-700 flex items-center justify-center w-8 h-8 bg-white bg-opacity-70 rounded-full shadow-sm"
+                  onClick={() => {
+                    const container = document.getElementById('bookshelves-container');
+                    if (container) {
+                      container.scrollBy({ left: 300, behavior: 'smooth' });
+                    }
+                  }}
+                  aria-label="Scroll right"
+                >
+                  &gt;
+                </button>
+                {bookshelves.map((shelf, index) => (
                 <div key={shelf.id} className="flex flex-col items-start gap-4 self-stretch rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm min-w-[300px] max-w-[300px]">
                   <div className="flex w-full items-center gap-4">
                     <Avatar
@@ -152,8 +152,10 @@ function BookshelfPage() {
                     </span>
                   </div>
                 </div>
-              ))
+              ))}
+              </>
             )}
+          </div>
           </div>
         </div>
         <div className="flex w-full flex-col items-start gap-6">
