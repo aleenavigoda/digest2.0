@@ -1,0 +1,78 @@
+1) Run the following command to sync Subframe components:
+
+```bash
+npx @subframe/cli@latest sync Avatar DropdownMenu SidebarWithNestedSectionsAndSearch
+```
+
+2) Add the following code to the page. If the code already exists, update the existing code but preserve existing business logic or functionality.
+
+```tsx
+<SidebarWithNestedSectionsAndSearch
+  className="mobile:hidden"
+  header={
+    <div className="flex w-full items-center justify-between pl-1 py-1">
+      <SubframeCore.DropdownMenu.Root>
+        <SubframeCore.DropdownMenu.Trigger asChild={true}>
+          <div className="flex grow shrink-0 basis-0 items-center gap-2">
+            <Avatar
+              size="small"
+              image="https://res.cloudinary.com/subframe/image/upload/v1741746214/uploads/7262/omdisrk7gzxrwymwkdzm.png"
+            >
+              A
+            </Avatar>
+            <span className="grow shrink-0 basis-0 text-body-bold font-body-bold text-default-font">
+              Digest
+            </span>
+          </div>
+        </SubframeCore.DropdownMenu.Trigger>
+        <SubframeCore.DropdownMenu.Portal>
+          <SubframeCore.DropdownMenu.Content
+            side="bottom"
+            align="start"
+            sideOffset={4}
+            asChild={true}
+          >
+            <DropdownMenu>
+              <DropdownMenu.DropdownItem icon={null}>
+                Invite team members
+              </DropdownMenu.DropdownItem>
+              <DropdownMenu.DropdownItem icon={null}>
+                Settings
+              </DropdownMenu.DropdownItem>
+              <DropdownMenu.DropdownItem icon={null}>
+                Sign out
+              </DropdownMenu.DropdownItem>
+            </DropdownMenu>
+          </SubframeCore.DropdownMenu.Content>
+        </SubframeCore.DropdownMenu.Portal>
+      </SubframeCore.DropdownMenu.Root>
+    </div>
+  }
+>
+  <SidebarWithNestedSectionsAndSearch.NavItem
+    selected={true}
+    icon="FeatherHome"
+  >
+    Home
+  </SidebarWithNestedSectionsAndSearch.NavItem>
+  <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherLibrary">
+    Bookshelves
+  </SidebarWithNestedSectionsAndSearch.NavItem>
+  <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherBookText">
+    Readlist
+  </SidebarWithNestedSectionsAndSearch.NavItem>
+  <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherBookOpen">
+    Public Lib
+  </SidebarWithNestedSectionsAndSearch.NavItem>
+</SidebarWithNestedSectionsAndSearch>
+
+```
+
+3) Be sure to import the components used in the code as well.
+
+```tsx
+import * as SubframeCore from "@subframe/core";
+import { Avatar } from "../components/Avatar";
+import { DropdownMenu } from "../components/DropdownMenu";
+import { SidebarWithNestedSectionsAndSearch } from "../components/SidebarWithNestedSectionsAndSearch";
+```
