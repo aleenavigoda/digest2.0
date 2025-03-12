@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Added import for useNavigate
 import { DefaultPageLayout } from "../ui/layouts/DefaultPageLayout";
 import { Avatar } from "../ui/components/Avatar";
 import { Button } from "../ui/components/Button";
@@ -12,7 +11,6 @@ import { getPublicBookshelves, Bookshelf } from "../services/bookshelfService";
 import { getAllEssays, Essay } from "../services/essayService";
 
 function BookshelfPage() {
-  const navigate = useNavigate(); // Added navigate hook
   const [bookshelves, setBookshelves] = useState<Bookshelf[]>([]);
   const [essays, setEssays] = useState<Essay[]>([]);
   const [bookshelvesLoading, setBookshelvesLoading] = useState(true);
@@ -25,39 +23,13 @@ function BookshelfPage() {
   );
   const itemsPerPage = 10;
 
-  // Color palettes for distinct bookshelf gradients
-  const colorPalettes = [
-    ['#FF5F6D', '#FFC371'], // Warm sunset
-    ['#2193b0', '#6dd5ed'], // Cool blue
-    ['#834d9b', '#d04ed6'], // Purple fusion
-    ['#4e54c8', '#8f94fb'], // Mystic blues
-    ['#11998e', '#38ef7d'], // Green meadow
-    ['#FC466B', '#3F5EFB'], // Pink to blue
-    ['#00F260', '#0575E6'], // Green to blue
-    ['#e1eec3', '#f05053'], // Soft green to red
-    ['#8A2387', '#F27121'], // Purple to orange
-    ['#1A2980', '#26D0CE'], // Dark blue to teal
-  ];
-
-  // Shuffle function for arrays
-  const shuffleArray = <T,>(array: T[]): T[] => {
-    const newArray = [...array];
-    for (let i = newArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-    }
-    return newArray;
-  };
-
   // Fetch bookshelves from Neo4j
   useEffect(() => {
     const fetchBookshelves = async () => {
       try {
         setBookshelvesLoading(true);
         const data = await getPublicBookshelves();
-        // Randomize the order of bookshelves
-        const shuffledBookshelves = shuffleArray(data);
-        setBookshelves(shuffledBookshelves);
+        setBookshelves(data);
       } catch (error) {
         console.error("Error fetching bookshelves:", error);
       } finally {
@@ -163,27 +135,15 @@ function BookshelfPage() {
                   {bookshelves.map((shelf, index) => (
                     <div
                       key={shelf.id}
-                      className="flex flex-col items-start gap-4 self-stretch rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm min-w-[300px] max-w-[300px] mx-2 my-1 cursor-pointer hover:shadow-md transition-shadow"
-                      onClick={() => {
-                        // Handle bookshelf selection
-                        console.log(`Selected bookshelf: ${shelf.id}`);
-                      }}
+                      className="flex flex-col items-start gap-4 self-stretch rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm min-w-[300px] max-w-[300px] mx-2 my-1"
                     >
                       <div className="flex w-full items-center gap-4">
-                        <Avatar 
-                          size="x-large" 
-                          image={shelf.image_url || ""}
-                          style={{
-                            background: `linear-gradient(135deg, 
-                              ${colorPalettes[index % colorPalettes.length][0]}, 
-                              ${colorPalettes[index % colorPalettes.length][1]})`,
-                          }}
-                        >
+                        <Avatar size="x-large" image={shelf.image_url || ""}>
                           {shelf.name.charAt(0)}
                         </Avatar>
                         <div className="flex grow shrink-0 basis-0 flex-col items-start gap-1">
                           <span className="text-caption-bold font-caption-bold text-brand-700">
-                            {shelf.core_curator || (index === 0 ? "DIGEST" : "RADAR")}
+                            {index === 0 ? "DIGEST" : "RADAR"}
                           </span>
                           <span className="text-heading-3 font-heading-3 text-default-font">
                             {shelf.name}
@@ -317,8 +277,8 @@ function BookshelfPage() {
                           className="h-6 w-6 flex-none rounded-md"
                           style={{
                             background: `linear-gradient(135deg, 
-                              ${colorPalettes[essay.title.charCodeAt(0) % colorPalettes.length][0]}, 
-                              ${colorPalettes[essay.title.charCodeAt(0) % colorPalettes.length][1]})`,
+                              hsl(${(essay.title.charCodeAt(0) * 7) % 360}, 80%, 65%), 
+                              hsl(${(essay.title.charCodeAt(0) * 7 + 120) % 360}, 70%, 55%))`,
                           }}
                         ></div>
                         <a
