@@ -53,7 +53,7 @@ export function DefaultPageLayout({
     <DefaultPageLayoutRoot className={className}>
       <div className="flex h-full w-full">
         <SidebarWithNestedSectionsAndSearch
-          className="mobile:hidden"
+          className="mobile:hidden w-72"
           header={
             <div className="flex w-full items-center justify-between pl-1 py-1">
               <SubframeCore.DropdownMenu.Root>
@@ -95,7 +95,6 @@ export function DefaultPageLayout({
           }
         >
           <SidebarWithNestedSectionsAndSearch.NavItem
-            selected={true}
             icon="FeatherHome"
           >
             Home
@@ -106,7 +105,10 @@ export function DefaultPageLayout({
           <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherBookText">
             Readlist
           </SidebarWithNestedSectionsAndSearch.NavItem>
-          <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherBookOpen">
+          <SidebarWithNestedSectionsAndSearch.NavItem
+            selected={true}
+            icon="FeatherBookOpen"
+          >
             Public Lib
           </SidebarWithNestedSectionsAndSearch.NavItem>
         </SidebarWithNestedSectionsAndSearch>
