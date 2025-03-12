@@ -129,7 +129,7 @@ function BookshelfPage() {
                   &gt;
                 </button>
                 {bookshelves.map((shelf, index) => (
-                <div key={shelf.id} className="flex flex-col items-start gap-4 self-stretch rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm min-w-[300px] max-w-[300px]">
+                <div key={shelf.id} className="flex flex-col items-start gap-4 self-stretch rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm min-w-[300px] max-w-[300px] mx-2 my-1">
                   <div className="flex w-full items-center gap-4">
                     <Avatar
                       size="x-large"
