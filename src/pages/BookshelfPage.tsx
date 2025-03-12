@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Added import for useNavigate
 import { DefaultPageLayout } from "../ui/layouts/DefaultPageLayout";
 import { Avatar } from "../ui/components/Avatar";
 import { Button } from "../ui/components/Button";
@@ -11,6 +12,7 @@ import { getPublicBookshelves, Bookshelf } from "../services/bookshelfService";
 import { getAllEssays, Essay } from "../services/essayService";
 
 function BookshelfPage() {
+  const navigate = useNavigate(); // Added navigate hook
   const [bookshelves, setBookshelves] = useState<Bookshelf[]>([]);
   const [essays, setEssays] = useState<Essay[]>([]);
   const [bookshelvesLoading, setBookshelvesLoading] = useState(true);
@@ -164,7 +166,7 @@ function BookshelfPage() {
                       className="flex flex-col items-start gap-4 self-stretch rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm min-w-[300px] max-w-[300px] mx-2 my-1 cursor-pointer hover:shadow-md transition-shadow"
                       onClick={() => {
                         // Navigate to the LibraryPage with the selected bookshelf
-                        window.location.href = `/library?id=${shelf.id}`;
+                        navigate(`/library?id=${shelf.id}`); // Updated navigation
                       }}
                     >
                       <div className="flex w-full items-center gap-4">
