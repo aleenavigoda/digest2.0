@@ -59,7 +59,7 @@ export const MOCK_ESSAYS: Essay[] = [
   }
 ];
 
-export async function getAllEssays(): Promise<Essay[]> {
+export async function getAllEssays(domain?: string): Promise<Essay[]> {
   try {
     // Check if supabase client is properly initialized
     if (!supabase) {
@@ -71,11 +71,19 @@ export async function getAllEssays(): Promise<Essay[]> {
     console.log('Attempting to fetch essays from Supabase...');
     
     // Query directly from all_urls table since we know it exists
-    // Use a higher limit to fetch more essays, but not too high to avoid performance issues
-    const { data, error } = await supabase
+    // Create a query builder
+    let query = supabase
       .from('all_urls')
-      .select('*')
-      .limit(500); // Increased from 20 to 500 to get more content
+      .select('*');
+    
+    // Apply domain filter if provided
+    if (domain && domain !== "All domains") {
+      console.log(`Filtering essays by domain: ${domain}`);
+      query = query.eq('domain_name', domain);
+    }
+    
+    // Limit the results
+    const { data, error } = await query.limit(500);
 
     if (error) {
       console.error('Error fetching essays from all_urls table:', error);

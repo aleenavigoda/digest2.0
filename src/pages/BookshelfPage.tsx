@@ -44,8 +44,8 @@ function BookshelfPage() {
         setEssaysLoading(true);
         console.log('Fetching essays data from Supabase...');
         
-        // Try to get real data
-        const data = await getAllEssays();
+        // Try to get real data with domain filter
+        const data = await getAllEssays(selectedDomain);
         console.log('Essay data received:', data ? data.length : 0, 'items');
         
         if (data && data.length > 0) {
@@ -71,20 +71,16 @@ function BookshelfPage() {
     };
 
     fetchEssays();
-  }, []);
+  }, [selectedDomain]);
 
-  // Filter essays based on search query and selected domain
+  // Filter essays based on search query only
+  // The domain filtering is now handled by the backend
   const filteredEssays = essays.filter(essay => {
-    // First check domain filter
-    const domainMatch = selectedDomain === "All domains" || essay.domain_name === selectedDomain;
-    
-    // Then check search query
-    const searchMatch = searchQuery === "" || 
+    // Check search query
+    return searchQuery === "" || 
       essay.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       essay.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
       essay.domain_name.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    return domainMatch && searchMatch;
   });
 
   // Paginate essays - optimized for larger dataset
