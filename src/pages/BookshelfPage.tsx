@@ -143,7 +143,7 @@ function BookshelfPage() {
                         </Avatar>
                         <div className="flex grow shrink-0 basis-0 flex-col items-start gap-1">
                           <span className="text-caption-bold font-caption-bold text-brand-700">
-                            {index === 0 ? "DIGEST" : "RADAR"}
+                            {index % 2 === 0 ? "DIGEST" : "RADAR"}
                           </span>
                           <span className="text-heading-3 font-heading-3 text-default-font">
                             {shelf.name}
