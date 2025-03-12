@@ -7,9 +7,9 @@ import { v4 as uuidv4 } from 'uuid';
 dotenv.config();
 
 // Get environment variables
-const neo4jUri = process.env.VITE_NEO4J_URI || '';
-const neo4jUser = process.env.VITE_NEO4J_USER || '';
-const neo4jPassword = process.env.VITE_NEO4J_PASSWORD || '';
+const neo4jUri = process.env.NEO4J_URI || '';
+const neo4jUser = process.env.NEO4J_USERNAME || '';
+const neo4jPassword = process.env.NEO4J_PASSWORD || '';
 
 console.log('Setting up Neo4j database with sample data...');
 console.log('URI:', neo4jUri ? 'URI is set' : 'URI is missing');

@@ -6,9 +6,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // Get environment variables
-const neo4jUri = process.env.VITE_NEO4J_URI || '';
-const neo4jUser = process.env.VITE_NEO4J_USER || '';
-const neo4jPassword = process.env.VITE_NEO4J_PASSWORD || '';
+const neo4jUri = process.env.NEO4J_URI || '';
+const neo4jUser = process.env.NEO4J_USERNAME || '';
+const neo4jPassword = process.env.NEO4J_PASSWORD || '';
 
 console.log('Connecting to Neo4j database...');
 console.log('URI:', neo4jUri ? 'URI is set' : 'URI is missing');
@@ -28,40 +28,39 @@ const driver = neo4j.driver(
 
 // You can modify this query to run any Cypher query you want
 const CYPHER_QUERY = `
-  MATCH (n)
-  RETURN n
+  MATCH (n) 
+  RETURN n 
   LIMIT 25
 `;
 
-async function runCustomQuery() {
+async function runQuery() {
   const session = driver.session();
   
   try {
     console.log('Running Cypher query:', CYPHER_QUERY);
-    
     const result = await session.run(CYPHER_QUERY);
     
-    console.log(`Query returned ${result.records.length} records:`);
+    console.log(`Query returned ${result.records.length} records.`);
     
-    result.records.forEach((record, index) => {
-      console.log(`\nRecord ${index + 1}:`);
+    result.records.forEach((record, i) => {
+      console.log(`\nRecord ${i+1}:`);
       record.keys.forEach(key => {
         const value = record.get(key);
         if (value && typeof value === 'object' && value.properties) {
-          console.log(`${key}: ${JSON.stringify(value.properties, null, 2)}`);
+          console.log(`${key}:`, value.properties);
         } else {
-          console.log(`${key}: ${JSON.stringify(value, null, 2)}`);
+          console.log(`${key}:`, value);
         }
       });
     });
     
   } catch (error) {
-    console.error('Error executing query:', error);
+    console.error('Error running query:', error);
   } finally {
     await session.close();
     await driver.close();
   }
 }
 
-runCustomQuery()
-  .catch(error => console.error('Error in script:', error));
+runQuery()
+  .catch(error => console.error('Unhandled error:', error));
