@@ -10,77 +10,113 @@
 
 import React from "react";
 import * as SubframeCore from "@subframe/core";
-import { Avatar } from "./Avatar";
 import { DropdownMenu } from "./DropdownMenu";
-import { TextField } from "./TextField";
-import { IconButton } from "./IconButton";
+import { Accordion } from "./Accordion";
 
-interface NavItemProps extends React.HTMLAttributes<HTMLAnchorElement> {
-  isActive?: boolean;
-  icon?: React.ReactNode;
+interface NavItemProps extends React.HTMLAttributes<HTMLDivElement> {
+  selected?: boolean;
   children?: React.ReactNode;
+  icon?: SubframeCore.IconName;
+  rightSlot?: React.ReactNode;
   className?: string;
-  href?: string;
 }
 
-const NavItem = React.forwardRef<HTMLAnchorElement, NavItemProps>(
-  function NavItem(
-    { isActive, icon, children, className, ...otherProps }: NavItemProps,
-    ref
-  ) {
-    return (
-      <a
+const NavItem = React.forwardRef<HTMLElement, NavItemProps>(function NavItem(
+  {
+    selected = false,
+    children,
+    icon = "FeatherCircleDashed",
+    rightSlot,
+    className,
+    ...otherProps
+  }: NavItemProps,
+  ref
+) {
+  return (
+    <div
+      className={SubframeCore.twClassNames(
+        "group/24343c20 flex h-8 w-full cursor-pointer items-center gap-2 rounded-md px-3 py-1 hover:bg-neutral-50 active:bg-neutral-100",
+        {
+          "bg-neutral-100 hover:bg-neutral-100 active:bg-neutral-200": selected,
+        },
+        className
+      )}
+      ref={ref as any}
+      {...otherProps}
+    >
+      <SubframeCore.Icon
         className={SubframeCore.twClassNames(
-          "flex h-10 w-full items-center gap-2 rounded-md px-3 py-2 text-body font-body",
-          isActive
-            ? "bg-neutral-hover text-default-font"
-            : "text-subtext-color hover:bg-neutral-hover hover:text-default-font",
-          className
+          "text-body font-body text-subtext-color",
+          { "text-default-font": selected }
         )}
-        ref={ref}
-        {...otherProps}
-      >
-        {icon ? (
-          <div className="flex h-4 w-4 items-center justify-center text-inherit">
-            {icon}
-          </div>
-        ) : null}
-        <span className="grow shrink-0 basis-0 text-inherit">{children}</span>
-        {isActive ? (
-          <div className="h-full w-0.5 rounded-full bg-neutral-hover"></div>
-        ) : null}
-      </a>
-    );
-  }
-);
+        name={icon}
+      />
+      {children ? (
+        <span
+          className={SubframeCore.twClassNames(
+            "line-clamp-1 grow shrink-0 basis-0 text-caption-bold font-caption-bold text-subtext-color",
+            {
+              "text-caption-bold font-caption-bold text-default-font": selected,
+            }
+          )}
+        >
+          {children}
+        </span>
+      ) : null}
+      {rightSlot ? <div className="flex items-center">{rightSlot}</div> : null}
+    </div>
+  );
+});
 
-interface NavSectionProps extends React.HTMLAttributes<HTMLElement> {
-  title?: string;
+interface NavSectionProps extends React.ComponentProps<typeof Accordion> {
   children?: React.ReactNode;
+  label?: React.ReactNode;
+  icon?: SubframeCore.IconName;
+  rightSlot?: React.ReactNode;
   className?: string;
 }
 
 const NavSection = React.forwardRef<HTMLElement, NavSectionProps>(
   function NavSection(
-    { title, children, className, ...otherProps }: NavSectionProps,
+    {
+      children,
+      label,
+      icon = null,
+      rightSlot,
+      className,
+      ...otherProps
+    }: NavSectionProps,
     ref
   ) {
     return (
-      <section
+      <Accordion
         className={SubframeCore.twClassNames(
-          "flex w-full flex-col items-start gap-1",
+          "group/19b3e897 cursor-pointer",
           className
         )}
+        trigger={
+          <div className="flex h-8 w-full flex-none items-center gap-2 rounded-md pl-3 pr-2 py-1 group-hover/19b3e897:bg-neutral-50">
+            <Accordion.Chevron />
+            {label ? (
+              <span className="line-clamp-1 grow shrink-0 basis-0 text-caption-bold font-caption-bold text-default-font">
+                {label}
+              </span>
+            ) : null}
+            {rightSlot ? (
+              <div className="flex items-center">{rightSlot}</div>
+            ) : null}
+          </div>
+        }
+        defaultOpen={true}
         ref={ref as any}
         {...otherProps}
       >
-        {title ? (
-          <span className="px-3 text-overline font-overline uppercase tracking-wider text-muted-color">
-            {title}
-          </span>
+        {children ? (
+          <div className="flex w-full flex-col items-start pl-6">
+            {children}
+          </div>
         ) : null}
-        <div className="flex w-full flex-col items-start">{children}</div>
-      </section>
+      </Accordion>
     );
   }
 );
