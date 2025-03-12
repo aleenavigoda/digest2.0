@@ -1,0 +1,190 @@
+Digest
+
+Explore our bookshelves
+>
+I
+DIGEST
+Irreverence Wrapped in Gravitas
+Stories of bold visionaries, shapers of new industries, and makers of new worlds.
+M
+DIGEST
+Memetic Field Trips
+Rediscovering the random, forgotten corners of online history.
+E
+DIGEST
+Evergreen Tabs
+Essays to leave open—and come back to over and over again
+F
+DIGEST
+Field Notes from Whenever
+Oral histories, speculative theses, and on-the-ground reports of present-day futures.
+D
+DIGEST
+Down the Rabbithole
+Essays that will keep you perusing down side links, backtracking non-sequitur references, and niche internet memes
+O
+DIGEST
+One Shot Chronicles
+Long-form deep dives that keep you seated—buckle up, you're reading these in one ride.
+C
+RADAR
+Climate & Care
+How can we re-write ecologies of care through the lens of indigenous heritage and the earth's natural primitives?
+T
+DIGEST
+The Shoulders We Stand on
+Tall tales about small ideas, quiet breakthroughs, and subtle shifts.
+L
+DIGEST
+Lowkey Deep
+Casually insightful reads that sneak up on you.
+R
+DIGEST
+Red Eye Contemplations
+Essays to read on your midnight flight
+O
+DIGEST
+Oddly Satisfying Insights
+Narrative research and essay explainers that scratch an intellectual itch you didn't know you had.
+R
+DIGEST
+Reality Check
+Essays that shift your perspective, one insight at a time.
+S
+DIGEST
+Substack and Chill
+Classic internet literature that you'll perpetually want to binge read, as if it was your first time.
+Browse all essays
+
+All domains
+What do you want to read?
+Title
+Published on
+Written by
+Date
+Brunch Briefing
+The Generalist
+Mario Gabriele
+2019-10-06
+The Crack-Up
+The Baffler
+Chris Lehmann
+2024-06-21
+Alan Watts – the Western Buddhist who healed my mind
+Aeon
+Tim Lott
+2012-09-21
+How did being happy become a matter of relentless competitive work?
+Aeon
+Cody Delistraty
+2019-10-31
+Why pregnancy is a biological war between mother and baby
+Aeon
+Suzanne Sadedin
+2014-08-04
+🍳 Brunch Briefing
+The Generalist
+Mario Gabriele
+2019-11-10
+Technology to cut down on sleep is just around the corner
+Aeon
+Jessa Gamble
+2013-04-10
+Girl Fight
+The Baffler
+Kristen Martin
+2024-04-04
+Brunch Briefing
+The Generalist
+Mario Gabriele
+2019-09-15
+Secretly seduced by science, Hasidic atheists lead a double life
+Aeon
+Batya Ungar-Sargon
+2015-02-11
+
+
+
+1
+
+2
+
+3
+
+4
+
+5
+
+
+[plugin:vite:esbuild] Transform failed with 7 errors:
+/home/runner/workspace/src/lib/neo4j.ts:33:6: ERROR: The symbol "neo4jUri" has already been declared
+/home/runner/workspace/src/lib/neo4j.ts:34:6: ERROR: The symbol "neo4jUser" has already been declared
+/home/runner/workspace/src/lib/neo4j.ts:35:6: ERROR: The symbol "neo4jPassword" has already been declared
+/home/runner/workspace/src/lib/neo4j.ts:38:6: ERROR: The symbol "driver" has already been declared
+/home/runner/workspace/src/lib/neo4j.ts:44:16: ERROR: Multiple exports with the same name "createSession"
+...
+/home/runner/workspace/src/lib/neo4j.ts:33:6
+The symbol "neo4jUri" has already been declared
+31 |  
+32 |  // Neo4j connection details
+33 |  const neo4jUri = process.env.NEO4J_URI || 'bolt://localhost:7687';
+   |        ^
+34 |  const neo4jUser = process.env.NEO4J_USER || 'neo4j';
+35 |  const neo4jPassword = process.env.NEO4J_PASSWORD || 'password';
+
+The symbol "neo4jUser" has already been declared
+32 |  // Neo4j connection details
+33 |  const neo4jUri = process.env.NEO4J_URI || 'bolt://localhost:7687';
+34 |  const neo4jUser = process.env.NEO4J_USER || 'neo4j';
+   |        ^
+35 |  const neo4jPassword = process.env.NEO4J_PASSWORD || 'password';
+36 |  
+
+The symbol "neo4jPassword" has already been declared
+33 |  const neo4jUri = process.env.NEO4J_URI || 'bolt://localhost:7687';
+34 |  const neo4jUser = process.env.NEO4J_USER || 'neo4j';
+35 |  const neo4jPassword = process.env.NEO4J_PASSWORD || 'password';
+   |        ^
+36 |  
+37 |  // Create a driver instance
+
+The symbol "driver" has already been declared
+36 |  
+37 |  // Create a driver instance
+38 |  const driver = neo4j.driver(
+   |        ^
+39 |    neo4jUri,
+40 |    neo4j.auth.basic(neo4jUser, neo4jPassword)
+
+Multiple exports with the same name "createSession"
+42 |  
+43 |  // Create and return a new session
+44 |  export function createSession() {
+   |                  ^
+45 |    return driver.session();
+46 |  }
+
+The symbol "createSession" has already been declared
+42 |  
+43 |  // Create and return a new session
+44 |  export function createSession() {
+   |                  ^
+45 |    return driver.session();
+46 |  }
+
+Multiple exports with the same name "default"
+46 |  }
+47 |  
+48 |  export default driver;
+   |         ^
+49 |
+    at failureErrorWithLog (/home/runner/workspace/node_modules/esbuild/lib/main.js:1472:15)
+    at /home/runner/workspace/node_modules/esbuild/lib/main.js:755:50
+    at responseCallbacks.<computed> (/home/runner/workspace/node_modules/esbuild/lib/main.js:622:9)
+    at handleIncomingPacket (/home/runner/workspace/node_modules/esbuild/lib/main.js:677:12)
+    at Socket.readFromStdout (/home/runner/workspace/node_modules/esbuild/lib/main.js:600:7)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:191:23
