@@ -19,7 +19,7 @@ import { TextField } from "../components/TextField";
 import { SidebarWithNestedSectionsAndSearch } from "../components/SidebarWithNestedSectionsAndSearch";
 import { IconButton } from "../components/IconButton";
 import SubframeLogo from "./subframe-logo.svg?react";
-import { useLocation } from 'react-router-dom'; //Import for location
+// import { useLocation } from 'react-router-dom'; // Removed until router is set up for location
 
 
 interface DefaultPageLayoutRootProps
