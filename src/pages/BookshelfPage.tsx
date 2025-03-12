@@ -138,7 +138,15 @@ function BookshelfPage() {
                       className="flex flex-col items-start gap-4 self-stretch rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm min-w-[300px] max-w-[300px] mx-2 my-1"
                     >
                       <div className="flex w-full items-center gap-4">
-                        <Avatar size="x-large" image={shelf.image_url || ""}>
+                        <Avatar 
+                          size="x-large" 
+                          image={shelf.image_url || ""}
+                          style={{
+                            background: `linear-gradient(135deg, 
+                              ${shelf.id === bookshelves[0]?.id ? 'hsl(340, 80%, 65%)' : shelf.id === bookshelves[1]?.id ? 'hsl(45, 90%, 60%)' : 'hsl(160, 80%, 45%)'},
+                              ${shelf.id === bookshelves[0]?.id ? 'hsl(290, 70%, 50%)' : shelf.id === bookshelves[1]?.id ? 'hsl(25, 90%, 50%)' : 'hsl(180, 70%, 30%)'})`,
+                          }}
+                        >
                           {shelf.name.charAt(0)}
                         </Avatar>
                         <div className="flex grow shrink-0 basis-0 flex-col items-start gap-1">
