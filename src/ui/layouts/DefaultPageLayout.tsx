@@ -83,10 +83,10 @@ export function DefaultPageLayout({
                           Invite team members
                         </DropdownMenu.DropdownItem>
                         <DropdownMenu.DropdownItem icon={null}>
-                          Account settings
+                          Settings
                         </DropdownMenu.DropdownItem>
                         <DropdownMenu.DropdownItem icon={null}>
-                          Logout
+                          Sign out
                         </DropdownMenu.DropdownItem>
                       </DropdownMenu>
                     </SubframeCore.DropdownMenu.Content>
@@ -101,7 +101,23 @@ export function DefaultPageLayout({
               </div>
             </>
           }
-        />
+        >
+          <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherHome">
+            Home
+          </SidebarWithNestedSectionsAndSearch.NavItem>
+          <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherLibrary">
+            Bookshelves
+          </SidebarWithNestedSectionsAndSearch.NavItem>
+          <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherBookText">
+            Readlist
+          </SidebarWithNestedSectionsAndSearch.NavItem>
+          <SidebarWithNestedSectionsAndSearch.NavItem
+            selected={true}
+            icon="FeatherBookOpen"
+          >
+            Public Lib
+          </SidebarWithNestedSectionsAndSearch.NavItem>
+        </SidebarWithNestedSectionsAndSearch>
         <main className="flex-1 overflow-auto">{children}</main>
       </div>
     </DefaultPageLayoutRoot>
