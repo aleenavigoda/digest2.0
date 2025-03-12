@@ -165,7 +165,7 @@ function BookshelfPage() {
           <span className="w-full text-heading-2 font-heading-2 text-default-font">
             Browse all essays
           </span>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 w-full">
             <SubframeCore.DropdownMenu.Root>
               <SubframeCore.DropdownMenu.Trigger asChild={true}>
                 <Button
@@ -214,13 +214,13 @@ function BookshelfPage() {
               </SubframeCore.DropdownMenu.Portal>
             </SubframeCore.DropdownMenu.Root>
             <TextField
-              className="h-auto grow shrink-0 basis-0"
+              className="h-auto grow shrink-0 basis-0 flex-1"
               label=""
               helpText=""
               icon="FeatherSearch"
             >
               <TextField.Input
-                className="w-56 grow shrink-0 basis-0"
+                className="w-full"
                 placeholder="What do you want to read?"
                 value={searchQuery}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(event.target.value)}
