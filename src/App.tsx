@@ -1,8 +1,9 @@
 
-import subframeLogo from "./assets/subframe-logo.svg?url"
+import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import BookshelfPage from "./pages/BookshelfPage";
 import Neo4jBrowserPage from "./pages/Neo4jBrowserPage";
+import subframeLogo from "./assets/subframe-logo.svg?url";
 
 export default function App() {
   return (
