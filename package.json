@@ -8,22 +8,17 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "setup-neo4j": "tsx src/scripts/setup-neo4j-sample-data.ts",
-    "add-bookshelves": "tsx src/scripts/add-more-bookshelves.ts",
-    "add-more-data": "tsx src/scripts/add-more-sample-data.ts",
-    "server": "tsx src/server.ts"
+    "server": "ts-node src/server.ts",
+    "dev:full": "concurrently \"npm run dev\" \"npm run server\"",
+    "setup-neo4j": "node src/scripts/add-custom-data.cjs"
   },
   "dependencies": {
     "@subframe/core": "^1.137.0",
     "@supabase/supabase-js": "^2.49.1",
-    "cors": "^2.8.5",
     "dotenv": "^16.4.7",
-    "express": "^4.21.2",
     "neo4j-driver": "^5.28.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^7.3.0",
-    "uuid": "^11.1.0"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.4",

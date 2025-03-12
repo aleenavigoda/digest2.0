@@ -97,14 +97,9 @@ function BookshelfPage() {
     <DefaultPageLayout>
       <div className="container max-w-none flex h-full w-full flex-col items-start gap-12 bg-default-background py-12">
         <div className="flex w-full flex-col items-start gap-6">
-          <div className="flex w-full justify-between items-center">
-            <span className="text-heading-2 font-heading-2 text-default-font">
-              Explore our bookshelves
-            </span>
-            <a href="/neo4j" className="text-brand-500 hover:text-brand-700 hover:underline">
-              View Neo4j Database
-            </a>
-          </div>
+          <span className="text-heading-2 font-heading-2 text-default-font">
+            Explore our bookshelves
+          </span>
           <div className="relative w-full">
             <div 
               id="bookshelves-container"
