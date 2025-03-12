@@ -87,9 +87,8 @@ export async function getAllEssays(domain?: string, searchQuery?: string): Promi
     if (searchQuery && searchQuery.trim() !== '') {
       const trimmedQuery = searchQuery.trim();
       console.log(`Searching essays with query: ${trimmedQuery}`);
-      // Using ilike for case-insensitive search with wildcards on both sides
-      query = query.or(`title.ilike.%${trimmedQuery}%`)
-                  .or(`author.ilike.%${trimmedQuery}%`);
+      // Just search in title field using ilike for better performance and more accurate results
+      query = query.ilike('title', `%${trimmedQuery}%`);
     }
     
     // Limit the results

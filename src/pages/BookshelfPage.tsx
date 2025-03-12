@@ -219,7 +219,6 @@ function BookshelfPage() {
                 value={searchQuery}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   const value = event.target.value;
-                  setSearchQuery(value);
                   
                   // Debounce search to avoid too many API calls
                   if (searchTimeout) {
@@ -229,6 +228,7 @@ function BookshelfPage() {
                   // Only search after user stops typing for 300ms
                   const timeout = setTimeout(() => {
                     setSearchQuery(value);
+                    setCurrentPage(1); // Reset to first page when search changes
                   }, 300);
                   
                   setSearchTimeout(timeout);
