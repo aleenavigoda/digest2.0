@@ -1,6 +1,3 @@
 
-// Run the Neo4j setup script via ts-node
-require('ts-node/register');
-require('./setup-neo4j-sample-data');
-
-console.log('Running Neo4j setup script...');
+// This script has been deprecated as part of Neo4j removal
+console.log('Neo4j setup script has been removed');

@@ -9,14 +9,12 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "server": "ts-node src/server.ts",
-    "dev:full": "concurrently \"npm run dev\" \"npm run server\"",
-    "setup-neo4j": "node src/scripts/add-custom-data.cjs"
+    "dev:full": "concurrently \"npm run dev\" \"npm run server\""
   },
   "dependencies": {
     "@subframe/core": "^1.137.0",
     "@supabase/supabase-js": "^2.49.1",
     "dotenv": "^16.4.7",
-    "neo4j-driver": "^5.28.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.3.0"
