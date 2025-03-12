@@ -18,7 +18,9 @@ export default function LibraryPage() {
     async function fetchBookshelfData() {
       if (bookshelfId) {
         try {
+          console.log("Fetching essays for bookshelf ID:", bookshelfId);
           const bookshelfEssays = await getBookshelfEssays(bookshelfId);
+          console.log("Essays loaded:", bookshelfEssays);
           setEssays(bookshelfEssays);
         } catch (error) {
           console.error("Error fetching bookshelf essays:", error);
@@ -26,6 +28,7 @@ export default function LibraryPage() {
           setLoading(false);
         }
       } else {
+        console.log("No bookshelf ID provided");
         setLoading(false);
       }
     }
@@ -161,15 +164,24 @@ export default function LibraryPage() {
     </div>
   </div>
   <div className="flex w-full flex-col items-start gap-8 overflow-auto">
-    <Table
-      header={
-        <Table.HeaderRow>
-          <Table.HeaderCell>Title</Table.HeaderCell>
-          <Table.HeaderCell>Written by</Table.HeaderCell>
-          <Table.HeaderCell>Published on</Table.HeaderCell>
-        </Table.HeaderRow>
-      }
-    >
+    {loading ? (
+      <div className="w-full text-center py-8">
+        <span className="text-body font-body text-default-font">Loading essays...</span>
+      </div>
+    ) : essays.length === 0 ? (
+      <div className="w-full text-center py-8">
+        <span className="text-body font-body text-default-font">No essays found for this bookshelf.</span>
+      </div>
+    ) : (
+      <Table
+        header={
+          <Table.HeaderRow>
+            <Table.HeaderCell>Title</Table.HeaderCell>
+            <Table.HeaderCell>Written by</Table.HeaderCell>
+            <Table.HeaderCell>Published on</Table.HeaderCell>
+          </Table.HeaderRow>
+        }
+      >
       <Table.Row>
         <Table.Cell className="h-16 grow shrink-0 basis-0">
           <div className="flex grow shrink-0 basis-0 items-center gap-2">
@@ -690,6 +702,7 @@ export default function LibraryPage() {
         </Table.Cell>
       </Table.Row>
     </Table>
+    )}
   </div>
 </div>
     </DefaultPageLayout>
