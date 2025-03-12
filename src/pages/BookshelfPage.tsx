@@ -235,7 +235,8 @@ function BookshelfPage() {
                           href={essay.url} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="whitespace-nowrap text-body-bold font-body-bold text-default-font hover:text-brand-500 hover:underline"
+                          className="block max-w-[300px] truncate text-body-bold font-body-bold text-default-font hover:text-brand-500 hover:underline"
+                          title={essay.title}
                         >
                           {essay.title}
                         </a>
