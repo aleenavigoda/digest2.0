@@ -4,8 +4,38 @@ import * as SubframeCore from "@subframe/core";
 import { Button } from "@/ui/components/Button";
 import { Avatar } from "@/ui/components/Avatar";
 import { Table } from "@/ui/components/Table";
-```tsx
-<div className="flex grow shrink-0 basis-0 flex-col items-start gap-8 self-stretch rounded-md bg-neutral-50 px-12 py-12 overflow-auto mobile:h-auto mobile:w-full mobile:rounded-none mobile:border-none mobile:bg-transparent mobile:px-0 mobile:py-0 mobile:shadow-none">
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { DefaultPageLayout } from "@/ui/layouts/DefaultPageLayout"; 
+import { getBookshelfEssays } from "@/services/socialGraphService";
+export default function LibraryPage() {
+  const [searchParams] = useSearchParams();
+  const bookshelfId = searchParams.get("id");
+  const [essays, setEssays] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    async function fetchBookshelfData() {
+      if (bookshelfId) {
+        try {
+          const bookshelfEssays = await getBookshelfEssays(bookshelfId);
+          setEssays(bookshelfEssays);
+        } catch (error) {
+          console.error("Error fetching bookshelf essays:", error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    }
+    
+    fetchBookshelfData();
+  }, [bookshelfId]);
+
+  return (
+    <DefaultPageLayout>
+      <div className="flex grow shrink-0 basis-0 flex-col items-start gap-8 self-stretch rounded-md bg-neutral-50 px-12 py-12 overflow-auto mobile:h-auto mobile:w-full mobile:rounded-none mobile:border-none mobile:bg-transparent mobile:px-0 mobile:py-0 mobile:shadow-none">
   <div className="flex w-full items-end gap-6 mobile:flex-col mobile:flex-nowrap mobile:items-center mobile:justify-start mobile:gap-6">
     <div className="flex h-40 w-40 flex-none flex-col items-center justify-center gap-2 overflow-hidden rounded-md shadow-lg">
       <img
@@ -662,3 +692,6 @@ import { Table } from "@/ui/components/Table";
     </Table>
   </div>
 </div>
+    </DefaultPageLayout>
+  );
+}
