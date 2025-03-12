@@ -1,8 +1,14 @@
-import subframeLogo from "./assets/subframe-logo.svg?url"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import BookshelfPage from "./pages/BookshelfPage";
+import LibraryPage from "./pages/LibraryPage";
 
 export default function App() {
   return (
-    <BookshelfPage />
+    <Router>
+      <Routes>
+        <Route path="/" element={<BookshelfPage />} />
+        <Route path="/library/:id" element={<LibraryPage />} />
+      </Routes>
+    </Router>
   );
 }

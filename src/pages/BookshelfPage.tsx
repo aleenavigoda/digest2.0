@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { DefaultPageLayout } from "../ui/layouts/DefaultPageLayout";
 import { Avatar } from "../ui/components/Avatar";
 import { Button } from "../ui/components/Button";
@@ -11,6 +12,7 @@ import { getPublicBookshelves, Bookshelf } from "../services/bookshelfService";
 import { getAllEssays, Essay } from "../services/essayService";
 
 function BookshelfPage() {
+  const navigate = useNavigate();
   const [bookshelves, setBookshelves] = useState<Bookshelf[]>([]);
   const [essays, setEssays] = useState<Essay[]>([]);
   const [bookshelvesLoading, setBookshelvesLoading] = useState(true);
@@ -161,7 +163,8 @@ function BookshelfPage() {
                   {bookshelves.map((shelf, index) => (
                     <div
                       key={shelf.id}
-                      className="flex flex-col items-start gap-4 self-stretch rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm min-w-[300px] max-w-[300px] mx-2 my-1"
+                      className="flex flex-col items-start gap-4 self-stretch rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm min-w-[300px] max-w-[300px] mx-2 my-1 hover:shadow-md transition-shadow cursor-pointer"
+                      onClick={() => navigate(`/library/${shelf.id}`)}
                     >
                       <div className="flex w-full items-center gap-4">
                         <Avatar 
