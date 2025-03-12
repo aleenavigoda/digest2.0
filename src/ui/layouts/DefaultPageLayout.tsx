@@ -9,17 +9,12 @@
  * Icon Button — https://app.subframe.com/ca2ccb428952/library?component=Icon+Button_af9405b1-8c54-4e01-9786-5aad308224f6
  */
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import * as SubframeCore from "@subframe/core";
-import { SidebarRailWithIcons } from "../components/SidebarRailWithIcons";
-import { Avatar } from "../components/Avatar";
-import { Button } from "../components/Button";
-import { DropdownMenu } from "../components/DropdownMenu";
-import { TextField } from "../components/TextField";
-import { SidebarWithNestedSectionsAndSearch } from "../components/SidebarWithNestedSectionsAndSearch";
 import { IconButton } from "../components/IconButton";
-import SubframeLogo from "./subframe-logo.svg?react";
-// import { useLocation } from 'react-router-dom'; // Removed until router is set up for location
+import { Avatar } from "../components/Avatar";
+import { DropdownMenu } from "../components/DropdownMenu";
+import { SidebarWithNestedSectionsAndSearch } from "../components/SidebarWithNestedSectionsAndSearch";
 
 
 interface DefaultPageLayoutRootProps
@@ -28,160 +23,87 @@ interface DefaultPageLayoutRootProps
   className?: string;
 }
 
-const DefaultPageLayoutRoot = React.forwardRef<
-  HTMLElement,
-  DefaultPageLayoutRootProps
->(function DefaultPageLayoutRoot(
-  { children, className, ...otherProps }: DefaultPageLayoutRootProps,
-  ref
-) {
-  const location = useLocation(); //Added for accessing pathname
-  const [bookshelves, setBookshelves] = useState([]);
-
-  useEffect(() => {
-    //Fetch bookshelf data.  REPLACE with your actual data fetching logic.
-    const fetchBookshelves = async () => {
-      try {
-        const response = await fetch('/api/bookshelves'); //Replace with your API endpoint
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setBookshelves(data);
-      } catch (error) {
-        console.error("Error fetching bookshelves:", error);
-      }
-    };
-    fetchBookshelves();
-  }, []);
-
-
-  return (
-    <div
-      className={SubframeCore.twClassNames(
-        "flex h-screen w-full items-start",
-        className
-      )}
-      ref={ref as any}
-      {...otherProps}
-    >
-      <SidebarWithNestedSectionsAndSearch
-        className="mobile:hidden"
-        header={
-          <>
-            <div className="flex w-full items-center justify-between pl-1 py-1">
-              <SubframeCore.DropdownMenu.Root>
-                <SubframeCore.DropdownMenu.Trigger asChild={true}>
-                  <div className="flex grow shrink-0 basis-0 items-center gap-2">
-                    <Avatar
-                      size="small"
-                      image="https://res.cloudinary.com/subframe/image/upload/v1741746214/uploads/7262/omdisrk7gzxrwymwkdzm.png"
-                    >
-                      A
-                    </Avatar>
-                    <span className="grow shrink-0 basis-0 text-body-bold font-body-bold text-default-font">
-                      Digest
-                    </span>
-                  </div>
-                </SubframeCore.DropdownMenu.Trigger>
-                <SubframeCore.DropdownMenu.Portal>
-                  <SubframeCore.DropdownMenu.Content
-                    side="bottom"
-                    align="start"
-                    sideOffset={4}
-                    asChild={true}
-                  >
-                    <DropdownMenu>
-                      <DropdownMenu.DropdownItem icon={null}>
-                        Invite team members
-                      </DropdownMenu.DropdownItem>
-                      <DropdownMenu.DropdownItem icon={null}>
-                        Settings
-                      </DropdownMenu.DropdownItem>
-                      <DropdownMenu.DropdownItem icon={null}>
-                        Sign out
-                      </DropdownMenu.DropdownItem>
-                    </DropdownMenu>
-                  </SubframeCore.DropdownMenu.Content>
-                </SubframeCore.DropdownMenu.Portal>
-              </SubframeCore.DropdownMenu.Root>
-            </div>
-            <TextField
-              className="h-auto w-full flex-none"
-              variant="filled"
-              label=""
-              helpText=""
-              icon="FeatherSearch"
-            >
-              <TextField.Input
-                placeholder="Find an essay"
-                value=""
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
-              />
-            </TextField>
-          </>
-        }
+const DefaultPageLayoutRoot = React.forwardRef(
+  function DefaultPageLayoutRoot(
+    { children, className, ...otherProps }: DefaultPageLayoutRootProps,
+    ref: React.Ref<HTMLDivElement>
+  ) {
+    return (
+      <div
+        ref={ref}
+        className={`flex h-full w-full flex-col overflow-hidden ${className || ""}`}
+        {...otherProps}
       >
-        <SidebarWithNestedSectionsAndSearch.NavItem
-          selected={location.pathname === "/"}
-          icon="FeatherHome"
-        >
-          Home
-        </SidebarWithNestedSectionsAndSearch.NavItem>
-        <SidebarWithNestedSectionsAndSearch.NavItem
-          selected={location.pathname === "/bookshelves"}
-          icon="FeatherLibrary"
-        >
-          Bookshelves
-        </SidebarWithNestedSectionsAndSearch.NavItem>
-        <SidebarWithNestedSectionsAndSearch.NavItem
-          selected={location.pathname === "/readlist"}
-          icon="FeatherBookText"
-        >
-          Readlist
-        </SidebarWithNestedSectionsAndSearch.NavItem>
-        <SidebarWithNestedSectionsAndSearch.NavSection
-          label="Library"
-          icon="FeatherLibrarySquare"
-          rightSlot={
-            <IconButton
-              size="small"
-              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-            />
-          }
-        >
-          {bookshelves.map((bookshelf) => (
-            <SidebarWithNestedSectionsAndSearch.NavSection
-              key={bookshelf.id} // Assumes bookshelf has an 'id' property
-              label={bookshelf.title} // Assumes bookshelf has a 'title' property
-              icon="FeatherLibrary"
-              rightSlot={
-                <IconButton
-                  size="small"
-                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-                />
-              }
-            >
-              {/* Add links to individual essays within each bookshelf here */}
-              {bookshelf.essays && bookshelf.essays.map((essay) => (
-                <SidebarWithNestedSectionsAndSearch.NavItem
-                  key={essay.id} // Assumes essay has an 'id' property
-                  icon="FeatherFileText"
-                >
-                  {essay.title} {/* Assumes essay has a 'title' property */}
-                </SidebarWithNestedSectionsAndSearch.NavItem>
-              ))}
-            </SidebarWithNestedSectionsAndSearch.NavSection>
-          ))}
-        </SidebarWithNestedSectionsAndSearch.NavSection>
-      </SidebarWithNestedSectionsAndSearch>
-      {children ? (
-        <div className="flex grow shrink-0 basis-0 flex-col items-start gap-2 self-stretch overflow-y-auto bg-default-background">
-          {children}
-        </div>
-      ) : null}
-    </div>
-  );
-});
+        {children}
+      </div>
+    );
+  }
+);
 
-export const DefaultPageLayout = DefaultPageLayoutRoot;
+interface DefaultPageLayoutProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function DefaultPageLayout({
+  children,
+  className,
+}: DefaultPageLayoutProps) {
+  return (
+    <DefaultPageLayoutRoot className={className}>
+      <div className="flex h-full w-full flex-1 overflow-hidden">
+        <SidebarWithNestedSectionsAndSearch
+          className="mobile:hidden w-64"
+          header={
+            <>
+              <div className="flex w-full items-center justify-between pl-1 py-1">
+                <SubframeCore.DropdownMenu.Root>
+                  <SubframeCore.DropdownMenu.Trigger asChild={true}>
+                    <div className="flex grow shrink-0 basis-0 items-center gap-2 cursor-pointer">
+                      <Avatar
+                        size="small"
+                        image="https://res.cloudinary.com/subframe/image/upload/v1741746214/uploads/7262/omdisrk7gzxrwymwkdzm.png"
+                      >
+                        A
+                      </Avatar>
+                      <span className="grow shrink-0 basis-0 text-body-bold font-body-bold text-default-font">
+                        Digest
+                      </span>
+                    </div>
+                  </SubframeCore.DropdownMenu.Trigger>
+                  <SubframeCore.DropdownMenu.Portal>
+                    <SubframeCore.DropdownMenu.Content
+                      side="bottom"
+                      align="start"
+                      sideOffset={4}
+                      asChild={true}
+                    >
+                      <DropdownMenu>
+                        <DropdownMenu.DropdownItem icon={null}>
+                          Invite team members
+                        </DropdownMenu.DropdownItem>
+                        <DropdownMenu.DropdownItem icon={null}>
+                          Account settings
+                        </DropdownMenu.DropdownItem>
+                        <DropdownMenu.DropdownItem icon={null}>
+                          Logout
+                        </DropdownMenu.DropdownItem>
+                      </DropdownMenu>
+                    </SubframeCore.DropdownMenu.Content>
+                  </SubframeCore.DropdownMenu.Portal>
+                </SubframeCore.DropdownMenu.Root>
+                <IconButton
+                  icon="FeatherMenu"
+                  iconClassName="text-default-font"
+                  variant="neutral-ghost"
+                  size="small"
+                />
+              </div>
+            </>
+          }
+        />
+        <main className="flex-1 overflow-auto">{children}</main>
+      </div>
+    </DefaultPageLayoutRoot>
+  );
+}

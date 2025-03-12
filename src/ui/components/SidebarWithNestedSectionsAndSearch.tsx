@@ -177,3 +177,68 @@ export const SidebarWithNestedSectionsAndSearch = Object.assign(
     NavSection,
   }
 );
+"use client";
+
+import React from "react";
+import * as SubframeCore from "@subframe/core";
+import { Avatar } from "./Avatar";
+import { DropdownMenu } from "./DropdownMenu";
+import { TextField } from "./TextField";
+import { IconButton } from "./IconButton";
+
+export const SidebarWithNestedSectionsAndSearch = ({
+  className,
+  header,
+  ...props
+}) => {
+  return (
+    <div className={`flex flex-col h-full border-r border-neutral-border ${className}`} {...props}>
+      <div className="border-b border-neutral-border p-4">
+        {header}
+      </div>
+      <div className="p-4">
+        <TextField className="w-full" icon="FeatherSearch">
+          <TextField.Input placeholder="Search..." />
+        </TextField>
+      </div>
+      <div className="flex-1 overflow-y-auto">
+        <nav className="space-y-1 px-2">
+          <div className="py-2">
+            <div className="px-3 mb-2 text-xs font-medium text-muted-color uppercase tracking-wider">
+              Browse
+            </div>
+            <a href="#" className="flex items-center px-3 py-2 text-sm font-medium rounded-md bg-brand-50 text-brand-700">
+              <SubframeCore.Icon.FeatherHome className="mr-3 h-5 w-5" />
+              Home
+            </a>
+            <a href="#" className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-default-font hover:bg-neutral-hover">
+              <SubframeCore.Icon.FeatherBookOpen className="mr-3 h-5 w-5" />
+              Bookshelves
+            </a>
+            <a href="#" className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-default-font hover:bg-neutral-hover">
+              <SubframeCore.Icon.FeatherStar className="mr-3 h-5 w-5" />
+              Favorites
+            </a>
+          </div>
+          <div className="py-2">
+            <div className="px-3 mb-2 text-xs font-medium text-muted-color uppercase tracking-wider">
+              Collections
+            </div>
+            <a href="#" className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-default-font hover:bg-neutral-hover">
+              <SubframeCore.Icon.FeatherFolder className="mr-3 h-5 w-5" />
+              Science
+            </a>
+            <a href="#" className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-default-font hover:bg-neutral-hover">
+              <SubframeCore.Icon.FeatherFolder className="mr-3 h-5 w-5" />
+              Philosophy
+            </a>
+            <a href="#" className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-default-font hover:bg-neutral-hover">
+              <SubframeCore.Icon.FeatherFolder className="mr-3 h-5 w-5" />
+              History
+            </a>
+          </div>
+        </nav>
+      </div>
+    </div>
+  );
+};
