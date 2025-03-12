@@ -8,6 +8,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<BookshelfPage />} />
         <Route path="/library/:id" element={<LibraryPage />} />
+        <Route path="/" element={<BookshelfPage />} />
+        <Route path="/library/:id" element={<LibraryPage />} />
       </Routes>
     </Router>
   );
