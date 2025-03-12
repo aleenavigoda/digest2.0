@@ -215,23 +215,18 @@ function BookshelfPage() {
             >
               <TextField.Input
                 className="w-full"
-                placeholder="What do you want to read?"
+                placeholder="What do you want to read? (Press Enter to search)"
                 value={searchQuery}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  const value = event.target.value;
-                  
-                  // Debounce search to avoid too many API calls
-                  if (searchTimeout) {
-                    clearTimeout(searchTimeout);
-                  }
-                  
-                  // Only search after user stops typing for 300ms
-                  const timeout = setTimeout(() => {
-                    setSearchQuery(value);
+                  // Just update the local state without triggering search
+                  setSearchQuery(event.target.value);
+                }}
+                onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                  // Trigger search only when Enter key is pressed
+                  if (event.key === 'Enter') {
                     setCurrentPage(1); // Reset to first page when search changes
-                  }, 300);
-                  
-                  setSearchTimeout(timeout);
+                    // No need to update searchQuery as it's already updated by onChange
+                  }
                 }}
               />
             </TextField>
