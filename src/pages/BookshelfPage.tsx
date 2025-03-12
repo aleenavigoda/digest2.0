@@ -143,8 +143,8 @@ function BookshelfPage() {
                           image={shelf.image_url || ""}
                           style={{
                             background: `linear-gradient(135deg, 
-                              ${shelf.id === bookshelves[0]?.id ? 'hsl(340, 80%, 65%)' : shelf.id === bookshelves[1]?.id ? 'hsl(45, 90%, 60%)' : 'hsl(160, 80%, 45%)'},
-                              ${shelf.id === bookshelves[0]?.id ? 'hsl(290, 70%, 50%)' : shelf.id === bookshelves[1]?.id ? 'hsl(25, 90%, 50%)' : 'hsl(180, 70%, 30%)'})`,
+                              hsl(${(index * 137) % 360}, 80%, 65%), 
+                              hsl(${((index * 137) + 40) % 360}, 70%, 50%))`,
                           }}
                         >
                           {shelf.name.charAt(0)}
