@@ -1,0 +1,47 @@
+[plugin:vite:esbuild] Transform failed with 4 errors:
+/home/runner/workspace/src/lib/supabase.ts:47:6: ERROR: The symbol "supabaseUrl" has already been declared
+/home/runner/workspace/src/lib/supabase.ts:48:6: ERROR: The symbol "supabaseKey" has already been declared
+/home/runner/workspace/src/lib/supabase.ts:59:13: ERROR: Multiple exports with the same name "supabase"
+/home/runner/workspace/src/lib/supabase.ts:59:13: ERROR: The symbol "supabase" has already been declared
+/home/runner/workspace/src/lib/supabase.ts:47:6
+The symbol "supabaseUrl" has already been declared
+45 |  
+46 |  // Get Supabase URL and key from environment variables or defaults
+47 |  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+   |        ^
+48 |  const supabaseKey = import.meta.env.VITE_SUPABASE_KEY || '';
+49 |  
+
+The symbol "supabaseKey" has already been declared
+46 |  // Get Supabase URL and key from environment variables or defaults
+47 |  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+48 |  const supabaseKey = import.meta.env.VITE_SUPABASE_KEY || '';
+   |        ^
+49 |  
+50 |  // Log the first 10 characters of the key for debugging
+
+Multiple exports with the same name "supabase"
+57 |  
+58 |  // Create Supabase client
+59 |  export const supabase = createClient(supabaseUrl, supabaseKey);
+   |               ^
+60 |  console.log("Supabase client initialized successfully");
+61 |  
+
+The symbol "supabase" has already been declared
+57 |  
+58 |  // Create Supabase client
+59 |  export const supabase = createClient(supabaseUrl, supabaseKey);
+   |               ^
+60 |  console.log("Supabase client initialized successfully");
+61 |
+    at failureErrorWithLog (/home/runner/workspace/node_modules/esbuild/lib/main.js:1472:15)
+    at /home/runner/workspace/node_modules/esbuild/lib/main.js:755:50
+    at responseCallbacks.<computed> (/home/runner/workspace/node_modules/esbuild/lib/main.js:622:9)
+    at handleIncomingPacket (/home/runner/workspace/node_modules/esbuild/lib/main.js:677:12)
+    at Socket.readFromStdout (/home/runner/workspace/node_modules/esbuild/lib/main.js:600:7)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:191:23
