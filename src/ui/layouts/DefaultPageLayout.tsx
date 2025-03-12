@@ -9,7 +9,7 @@
  * Icon Button — https://app.subframe.com/ca2ccb428952/library?component=Icon+Button_af9405b1-8c54-4e01-9786-5aad308224f6
  */
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import * as SubframeCore from "@subframe/core";
 import { SidebarRailWithIcons } from "../components/SidebarRailWithIcons";
 import { Avatar } from "../components/Avatar";
@@ -19,6 +19,8 @@ import { TextField } from "../components/TextField";
 import { SidebarWithNestedSectionsAndSearch } from "../components/SidebarWithNestedSectionsAndSearch";
 import { IconButton } from "../components/IconButton";
 import SubframeLogo from "./subframe-logo.svg?react";
+import { useLocation } from 'react-router-dom'; //Import for location
+
 
 interface DefaultPageLayoutRootProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -33,6 +35,27 @@ const DefaultPageLayoutRoot = React.forwardRef<
   { children, className, ...otherProps }: DefaultPageLayoutRootProps,
   ref
 ) {
+  const location = useLocation(); //Added for accessing pathname
+  const [bookshelves, setBookshelves] = useState([]);
+
+  useEffect(() => {
+    //Fetch bookshelf data.  REPLACE with your actual data fetching logic.
+    const fetchBookshelves = async () => {
+      try {
+        const response = await fetch('/api/bookshelves'); //Replace with your API endpoint
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setBookshelves(data);
+      } catch (error) {
+        console.error("Error fetching bookshelves:", error);
+      }
+    };
+    fetchBookshelves();
+  }, []);
+
+
   return (
     <div
       className={SubframeCore.twClassNames(
@@ -100,15 +123,21 @@ const DefaultPageLayoutRoot = React.forwardRef<
         }
       >
         <SidebarWithNestedSectionsAndSearch.NavItem
-          selected={true}
+          selected={location.pathname === "/"}
           icon="FeatherHome"
         >
           Home
         </SidebarWithNestedSectionsAndSearch.NavItem>
-        <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherLibrary">
+        <SidebarWithNestedSectionsAndSearch.NavItem
+          selected={location.pathname === "/bookshelves"}
+          icon="FeatherLibrary"
+        >
           Bookshelves
         </SidebarWithNestedSectionsAndSearch.NavItem>
-        <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherBookText">
+        <SidebarWithNestedSectionsAndSearch.NavItem
+          selected={location.pathname === "/readlist"}
+          icon="FeatherBookText"
+        >
           Readlist
         </SidebarWithNestedSectionsAndSearch.NavItem>
         <SidebarWithNestedSectionsAndSearch.NavSection
@@ -121,49 +150,29 @@ const DefaultPageLayoutRoot = React.forwardRef<
             />
           }
         >
-          <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherLibraryBig">
-            Public essays
-          </SidebarWithNestedSectionsAndSearch.NavItem>
-          <SidebarWithNestedSectionsAndSearch.NavSection
-            label="Climate & Care"
-            icon="FeatherLibrary"
-            rightSlot={
-              <IconButton
-                size="small"
-                onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-              />
-            }
-          >
-            <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherFileText">
-              Bookshelf Essay 1
-            </SidebarWithNestedSectionsAndSearch.NavItem>
-            <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherFileText">
-              Bookshelf Essay 2
-            </SidebarWithNestedSectionsAndSearch.NavItem>
-            <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherFileText">
-              Bookshelf Essay 3
-            </SidebarWithNestedSectionsAndSearch.NavItem>
-          </SidebarWithNestedSectionsAndSearch.NavSection>
-          <SidebarWithNestedSectionsAndSearch.NavSection
-            label="Substack & Chill"
-            icon="FeatherLibrary"
-            rightSlot={
-              <IconButton
-                size="small"
-                onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
-              />
-            }
-          >
-            <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherFileText">
-              Bookshelf Essay 4
-            </SidebarWithNestedSectionsAndSearch.NavItem>
-            <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherFileText">
-              Bookshelf Essay 5
-            </SidebarWithNestedSectionsAndSearch.NavItem>
-            <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherFileText">
-              Bookshelf Essay 6
-            </SidebarWithNestedSectionsAndSearch.NavItem>
-          </SidebarWithNestedSectionsAndSearch.NavSection>
+          {bookshelves.map((bookshelf) => (
+            <SidebarWithNestedSectionsAndSearch.NavSection
+              key={bookshelf.id} // Assumes bookshelf has an 'id' property
+              label={bookshelf.title} // Assumes bookshelf has a 'title' property
+              icon="FeatherLibrary"
+              rightSlot={
+                <IconButton
+                  size="small"
+                  onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+                />
+              }
+            >
+              {/* Add links to individual essays within each bookshelf here */}
+              {bookshelf.essays && bookshelf.essays.map((essay) => (
+                <SidebarWithNestedSectionsAndSearch.NavItem
+                  key={essay.id} // Assumes essay has an 'id' property
+                  icon="FeatherFileText"
+                >
+                  {essay.title} {/* Assumes essay has a 'title' property */}
+                </SidebarWithNestedSectionsAndSearch.NavItem>
+              ))}
+            </SidebarWithNestedSectionsAndSearch.NavSection>
+          ))}
         </SidebarWithNestedSectionsAndSearch.NavSection>
       </SidebarWithNestedSectionsAndSearch>
       {children ? (
