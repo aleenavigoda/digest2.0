@@ -18,9 +18,7 @@ function BookshelfPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDomain, setSelectedDomain] = useState<string>("All domains");
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(
-    null,
-  );
+  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
   const itemsPerPage = 10;
 
   // Fetch bookshelves from Neo4j
@@ -31,7 +29,7 @@ function BookshelfPage() {
         const data = await getPublicBookshelves();
         setBookshelves(data);
       } catch (error) {
-        console.error("Error fetching bookshelves:", error);
+        console.error('Error fetching bookshelves:', error);
       } finally {
         setBookshelvesLoading(false);
       }
@@ -45,27 +43,27 @@ function BookshelfPage() {
     const fetchEssays = async () => {
       try {
         setEssaysLoading(true);
-        console.log("Fetching essays data from Supabase...");
-
+        console.log('Fetching essays data from Supabase...');
+        
         // Try to get real data with domain filter and search query
         const data = await getAllEssays(selectedDomain, searchQuery);
-        console.log("Essay data received:", data ? data.length : 0, "items");
-
+        console.log('Essay data received:', data ? data.length : 0, 'items');
+        
         if (data && data.length > 0) {
           // Only use the data if it's not empty
-          console.log("Using real Supabase data");
+          console.log('Using real Supabase data');
           setEssays(data);
         } else {
-          console.warn("No data from Supabase, using mock data");
+          console.warn('No data from Supabase, using mock data');
           // Using import prevents potential circular dependency
-          import("../services/essayService").then((module) => {
+          import('../services/essayService').then(module => {
             setEssays(module.MOCK_ESSAYS);
           });
         }
       } catch (error) {
-        console.error("Error in essay fetch effect:", error);
+        console.error('Error in essay fetch effect:', error);
         // Fallback to mock data if something goes wrong
-        import("../services/essayService").then((module) => {
+        import('../services/essayService').then(module => {
           setEssays(module.MOCK_ESSAYS);
         });
       } finally {
@@ -82,12 +80,9 @@ function BookshelfPage() {
   // Paginate essays - optimized for larger dataset
   const indexOfLastEssay = currentPage * itemsPerPage;
   const indexOfFirstEssay = indexOfLastEssay - itemsPerPage;
-  const currentEssays = filteredEssays.slice(
-    indexOfFirstEssay,
-    indexOfLastEssay,
-  );
+  const currentEssays = filteredEssays.slice(indexOfFirstEssay, indexOfLastEssay);
   const totalPages = Math.ceil(filteredEssays.length / itemsPerPage);
-
+  
   // For very large datasets, limit the maximum visible pages to improve performance
   const maxVisiblePages = Math.min(totalPages, 100);
 
@@ -103,63 +98,61 @@ function BookshelfPage() {
             Explore our bookshelves
           </span>
           <div className="relative w-full">
-            <div
+            <div 
               id="bookshelves-container"
               className="flex w-full items-start gap-4 overflow-x-auto pb-2 hide-scrollbar"
-              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
-              {bookshelvesLoading ? (
-                <div className="flex items-center justify-center p-8 w-full">
-                  <span>Loading bookshelves...</span>
-                </div>
-              ) : bookshelves.length === 0 ? (
-                <div className="flex items-center justify-center p-8 w-full">
-                  <span>No bookshelves found.</span>
-                </div>
-              ) : (
-                <>
-                  <button
-                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 text-2xl text-brand-500 hover:text-brand-700 flex items-center justify-center w-8 h-8 bg-white bg-opacity-70 rounded-full shadow-sm"
-                    onClick={() => {
-                      const container = document.getElementById(
-                        "bookshelves-container",
-                      );
-                      if (container) {
-                        container.scrollBy({ left: 300, behavior: "smooth" });
-                      }
-                    }}
-                    aria-label="Scroll right"
-                  >
-                    &gt;
-                  </button>
-                  {bookshelves.map((shelf, index) => (
-                    <div
-                      key={shelf.id}
-                      className="flex flex-col items-start gap-4 self-stretch rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm min-w-[300px] max-w-[300px] mx-2 my-1"
+            {bookshelvesLoading ? (
+              <div className="flex items-center justify-center p-8 w-full">
+                <span>Loading bookshelves...</span>
+              </div>
+            ) : bookshelves.length === 0 ? (
+              <div className="flex items-center justify-center p-8 w-full">
+                <span>No bookshelves found.</span>
+              </div>
+            ) : (
+              <>
+                <button 
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 text-2xl text-brand-500 hover:text-brand-700 flex items-center justify-center w-8 h-8 bg-white bg-opacity-70 rounded-full shadow-sm"
+                  onClick={() => {
+                    const container = document.getElementById('bookshelves-container');
+                    if (container) {
+                      container.scrollBy({ left: 300, behavior: 'smooth' });
+                    }
+                  }}
+                  aria-label="Scroll right"
+                >
+                  &gt;
+                </button>
+                {bookshelves.map((shelf, index) => (
+                <div key={shelf.id} className="flex flex-col items-start gap-4 self-stretch rounded-md border border-solid border-neutral-border bg-default-background px-6 py-6 shadow-sm min-w-[300px] max-w-[300px] mx-2 my-1">
+                  <div className="flex w-full items-center gap-4">
+                    <Avatar
+                      size="x-large"
+                      image={shelf.image_url || ""}
                     >
-                      <div className="flex w-full items-center gap-4">
-                        <Avatar size="x-large" image={shelf.image_url || ""}>
-                          {shelf.name.charAt(0)}
-                        </Avatar>
-                        <div className="flex grow shrink-0 basis-0 flex-col items-start gap-1">
-                          <span className="text-caption-bold font-caption-bold text-brand-700">
-                            {index === 0 ? "DIGEST" : "RADAR"}
-                          </span>
-                          <span className="text-heading-3 font-heading-3 text-default-font">
-                            {shelf.name}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex flex-col items-start gap-4">
-                        <span className="text-body font-body text-subtext-color">
-                          {shelf.description}
-                        </span>
-                      </div>
+                      {shelf.name.charAt(0)}
+                    </Avatar>
+                    <div className="flex grow shrink-0 basis-0 flex-col items-start gap-1">
+                      <span className="text-caption-bold font-caption-bold text-brand-700">
+                        {index === 0 ? "DIGEST" : "RADAR"}
+                      </span>
+                      <span className="text-heading-3 font-heading-3 text-default-font">
+                        {shelf.name}
+                      </span>
                     </div>
-                  ))}
-                </>
-              )}
-            </div>
+                  </div>
+                  <div className="flex flex-col items-start gap-4">
+                    <span className="text-body font-body text-subtext-color">
+                      {shelf.description}
+                    </span>
+                  </div>
+                </div>
+              ))}
+              </>
+            )}
+          </div>
           </div>
         </div>
         <div className="flex w-full flex-col items-start gap-6">
@@ -186,8 +179,8 @@ function BookshelfPage() {
                   asChild={true}
                 >
                   <DropdownMenu>
-                    <DropdownMenu.DropdownItem
-                      icon={null}
+                    <DropdownMenu.DropdownItem 
+                      icon={null} 
                       onClick={() => {
                         setSelectedDomain("All domains");
                         setCurrentPage(1); // Reset to first page when filter changes
@@ -195,13 +188,11 @@ function BookshelfPage() {
                     >
                       All domains
                     </DropdownMenu.DropdownItem>
-                    {Array.from(
-                      new Set(essays.map((essay) => essay.domain_name)),
-                    )
+                    {Array.from(new Set(essays.map(essay => essay.domain_name)))
                       .sort() // Sort domains alphabetically
-                      .map((domain) => (
-                        <DropdownMenu.DropdownItem
-                          key={domain}
+                      .map(domain => (
+                        <DropdownMenu.DropdownItem 
+                          key={domain} 
                           icon={null}
                           onClick={() => {
                             setSelectedDomain(domain);
@@ -210,7 +201,8 @@ function BookshelfPage() {
                         >
                           {domain}
                         </DropdownMenu.DropdownItem>
-                      ))}
+                      ))
+                    }
                   </DropdownMenu>
                 </SubframeCore.DropdownMenu.Content>
               </SubframeCore.DropdownMenu.Portal>
@@ -231,7 +223,7 @@ function BookshelfPage() {
                 }}
                 onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
                   // Trigger search only when Enter key is pressed
-                  if (event.key === "Enter") {
+                  if (event.key === 'Enter') {
                     setCurrentPage(1); // Reset to first page when search changes
                     // No need to update searchQuery as it's already updated by onChange
                   }
@@ -273,17 +265,18 @@ function BookshelfPage() {
                   <Table.Row key={essay.id}>
                     <Table.Cell>
                       <div className="flex items-center gap-2">
-                        <div
+                        <div 
                           className="h-6 w-6 flex-none rounded-md"
                           style={{
                             background: `linear-gradient(135deg, 
                               hsl(${(essay.title.charCodeAt(0) * 7) % 360}, 80%, 65%), 
                               hsl(${(essay.title.charCodeAt(0) * 7 + 120) % 360}, 70%, 55%))`,
                           }}
-                        ></div>
-                        <a
-                          href={essay.url}
-                          target="_blank"
+                        >
+                        </div>
+                        <a 
+                          href={essay.url} 
+                          target="_blank" 
                           rel="noopener noreferrer"
                           className="block max-w-[300px] truncate text-body-bold font-body-bold text-default-font hover:text-brand-500 hover:underline"
                           title={essay.title}
@@ -339,11 +332,7 @@ function BookshelfPage() {
                     return (
                       <Button
                         key={pageNum}
-                        variant={
-                          currentPage === pageNum
-                            ? "brand-secondary"
-                            : "neutral-tertiary"
-                        }
+                        variant={currentPage === pageNum ? "brand-secondary" : "neutral-tertiary"}
                         onClick={() => handlePageChange(pageNum)}
                       >
                         {pageNum}
