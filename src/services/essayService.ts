@@ -86,7 +86,9 @@ export async function getAllEssays(domain?: string, searchQuery?: string): Promi
     // Apply search query filter if provided
     if (searchQuery && searchQuery.trim() !== '') {
       console.log(`Searching essays with query: ${searchQuery}`);
-      query = query.or(`title.ilike.%${searchQuery}%,author.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
+      query = query.or(`title.ilike.%${searchQuery}%`)
+                  .or(`description.ilike.%${searchQuery}%`)
+                  .or(`author.ilike.%${searchQuery}%`);
     }
     
     // Limit the results
