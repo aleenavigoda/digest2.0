@@ -1,17 +1,24 @@
 "use client";
 /*
  * Documentation:
- * Default Page Layout — https://app.subframe.com/ca2ccb428952/library?component=Default+Page+Layout_a57b1c43-310a-493f-b807-8cc88e2452cf
- * Sidebar rail with icons — https://app.subframe.com/ca2ccb428952/library?component=Sidebar+rail+with+icons_0d7efe0e-8762-46f5-b399-9f6d329e13b9
- * Dropdown Menu — https://app.subframe.com/ca2ccb428952/library?component=Dropdown+Menu_99951515-459b-4286-919e-a89e7549b43b
+ * Sidebar with icons — https://app.subframe.com/ca2ccb428952/library?component=Sidebar+with+icons_8f42a4a0-e731-4e79-8e60-af56db87fb5b
+ * Sidebar with sections — https://app.subframe.com/ca2ccb428952/library?component=Sidebar+with+sections_f4047c8b-cfb4-4761-b9cf-fbcae8a9b9b5
  * Avatar — https://app.subframe.com/ca2ccb428952/library?component=Avatar_bec25ae6-5010-4485-b46b-cf79e3943ab2
+ * Dropdown Menu — https://app.subframe.com/ca2ccb428952/library?component=Dropdown+Menu_3aac6e9a-5ac5-487b-a0da-10b0fa0a4f05
+ * Text Field — https://app.subframe.com/ca2ccb428952/library?component=Text+Field_afa33b0e-7ae7-4b1c-bc79-5a0fa234b34e
+ * Icon Button — https://app.subframe.com/ca2ccb428952/library?component=Icon+Button_af9405b1-8c54-4e01-9786-5aad308224f6
  */
 
 import React from "react";
 import * as SubframeCore from "@subframe/core";
 import { SidebarRailWithIcons } from "../components/SidebarRailWithIcons";
-import { DropdownMenu } from "../components/DropdownMenu";
 import { Avatar } from "../components/Avatar";
+import { Button } from "../components/Button";
+import { DropdownMenu } from "../components/DropdownMenu";
+import { TextField } from "../components/TextField";
+import { SidebarWithNestedSectionsAndSearch } from "../components/SidebarWithNestedSectionsAndSearch";
+import { IconButton } from "../components/IconButton";
+import SubframeLogo from "./subframe-logo.svg?react";
 
 interface DefaultPageLayoutRootProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -35,71 +42,130 @@ const DefaultPageLayoutRoot = React.forwardRef<
       ref={ref as any}
       {...otherProps}
     >
-      <SidebarRailWithIcons
+      <SidebarWithNestedSectionsAndSearch
+        className="mobile:hidden"
         header={
-          <div className="flex flex-col items-center justify-center gap-2 px-1 py-1">
-            <img
-              className="h-6 w-6 flex-none object-cover"
-              src="https://res.cloudinary.com/subframe/image/upload/v1711417507/shared/y2rsnhq3mex4auk54aye.png"
-            />
-          </div>
-        }
-        footer={
           <>
-            <SidebarRailWithIcons.NavItem icon="FeatherBell">
-              Item
-            </SidebarRailWithIcons.NavItem>
-            <SidebarRailWithIcons.NavItem icon="FeatherSettings">
-              Item
-            </SidebarRailWithIcons.NavItem>
-            <div className="flex flex-col items-center justify-end gap-1 px-1 py-1">
+            <div className="flex w-full items-center justify-between pl-1 py-1">
               <SubframeCore.DropdownMenu.Root>
                 <SubframeCore.DropdownMenu.Trigger asChild={true}>
-                  <Avatar
-                    size="small"
-                    image="https://res.cloudinary.com/subframe/image/upload/v1711417507/shared/fychrij7dzl8wgq2zjq9.avif"
-                  >
-                    A
-                  </Avatar>
+                  <div className="flex grow shrink-0 basis-0 items-center gap-2">
+                    <Avatar
+                      size="small"
+                      image="https://res.cloudinary.com/subframe/image/upload/v1741746214/uploads/7262/omdisrk7gzxrwymwkdzm.png"
+                    >
+                      A
+                    </Avatar>
+                    <span className="grow shrink-0 basis-0 text-body-bold font-body-bold text-default-font">
+                      Digest
+                    </span>
+                  </div>
                 </SubframeCore.DropdownMenu.Trigger>
                 <SubframeCore.DropdownMenu.Portal>
                   <SubframeCore.DropdownMenu.Content
-                    side="right"
-                    align="end"
+                    side="bottom"
+                    align="start"
                     sideOffset={4}
                     asChild={true}
                   >
                     <DropdownMenu>
-                      <DropdownMenu.DropdownItem icon="FeatherUser">
-                        Profile
+                      <DropdownMenu.DropdownItem icon={null}>
+                        Invite team members
                       </DropdownMenu.DropdownItem>
-                      <DropdownMenu.DropdownItem icon="FeatherSettings">
+                      <DropdownMenu.DropdownItem icon={null}>
                         Settings
                       </DropdownMenu.DropdownItem>
-                      <DropdownMenu.DropdownItem icon="FeatherLogOut">
-                        Log out
+                      <DropdownMenu.DropdownItem icon={null}>
+                        Sign out
                       </DropdownMenu.DropdownItem>
                     </DropdownMenu>
                   </SubframeCore.DropdownMenu.Content>
                 </SubframeCore.DropdownMenu.Portal>
               </SubframeCore.DropdownMenu.Root>
             </div>
+            <TextField
+              className="h-auto w-full flex-none"
+              variant="filled"
+              label=""
+              helpText=""
+              icon="FeatherSearch"
+            >
+              <TextField.Input
+                placeholder="Find an essay"
+                value=""
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {}}
+              />
+            </TextField>
           </>
         }
       >
-        <SidebarRailWithIcons.NavItem icon="FeatherHome" selected={true}>
+        <SidebarWithNestedSectionsAndSearch.NavItem
+          selected={true}
+          icon="FeatherHome"
+        >
           Home
-        </SidebarRailWithIcons.NavItem>
-        <SidebarRailWithIcons.NavItem icon="FeatherInbox">
-          Inbox
-        </SidebarRailWithIcons.NavItem>
-        <SidebarRailWithIcons.NavItem icon="FeatherBarChart2">
-          Reports
-        </SidebarRailWithIcons.NavItem>
-        <SidebarRailWithIcons.NavItem icon="FeatherFolder">
-          Projects
-        </SidebarRailWithIcons.NavItem>
-      </SidebarRailWithIcons>
+        </SidebarWithNestedSectionsAndSearch.NavItem>
+        <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherLibrary">
+          Bookshelves
+        </SidebarWithNestedSectionsAndSearch.NavItem>
+        <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherBookText">
+          Readlist
+        </SidebarWithNestedSectionsAndSearch.NavItem>
+        <SidebarWithNestedSectionsAndSearch.NavSection
+          label="Library"
+          icon="FeatherLibrarySquare"
+          rightSlot={
+            <IconButton
+              size="small"
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+            />
+          }
+        >
+          <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherLibraryBig">
+            Public essays
+          </SidebarWithNestedSectionsAndSearch.NavItem>
+          <SidebarWithNestedSectionsAndSearch.NavSection
+            label="Climate & Care"
+            icon="FeatherLibrary"
+            rightSlot={
+              <IconButton
+                size="small"
+                onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+              />
+            }
+          >
+            <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherFileText">
+              Bookshelf Essay 1
+            </SidebarWithNestedSectionsAndSearch.NavItem>
+            <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherFileText">
+              Bookshelf Essay 2
+            </SidebarWithNestedSectionsAndSearch.NavItem>
+            <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherFileText">
+              Bookshelf Essay 3
+            </SidebarWithNestedSectionsAndSearch.NavItem>
+          </SidebarWithNestedSectionsAndSearch.NavSection>
+          <SidebarWithNestedSectionsAndSearch.NavSection
+            label="Substack & Chill"
+            icon="FeatherLibrary"
+            rightSlot={
+              <IconButton
+                size="small"
+                onClick={(event: React.MouseEvent<HTMLButtonElement>) => {}}
+              />
+            }
+          >
+            <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherFileText">
+              Bookshelf Essay 4
+            </SidebarWithNestedSectionsAndSearch.NavItem>
+            <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherFileText">
+              Bookshelf Essay 5
+            </SidebarWithNestedSectionsAndSearch.NavItem>
+            <SidebarWithNestedSectionsAndSearch.NavItem icon="FeatherFileText">
+              Bookshelf Essay 6
+            </SidebarWithNestedSectionsAndSearch.NavItem>
+          </SidebarWithNestedSectionsAndSearch.NavSection>
+        </SidebarWithNestedSectionsAndSearch.NavSection>
+      </SidebarWithNestedSectionsAndSearch>
       {children ? (
         <div className="flex grow shrink-0 basis-0 flex-col items-start gap-2 self-stretch overflow-y-auto bg-default-background">
           {children}
